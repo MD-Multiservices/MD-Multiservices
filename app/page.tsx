@@ -1,24 +1,20 @@
 const googleBusinessUrl = "https://share.google/VcY2B8sPoMXdcNlpc";
-const logoUrl = "/logo/logo.jpg";
+const logoUrl = "/Logo/logo.jpg";
 
-const photos = {
+const photos: { avant: string[]; pendant: string[]; apres: string[] } = {
   avant: [
-    "/Renovation/Avant/avant-1.jpg",
-    "/Renovation/Avant/avant-2.jpg",
-    "/Renovation/Avant/avant-3.jpg",
-    "/Renovation/Avant/avant-4.jpg",
-    "/Renovation/Avant/avant-5.jpg",
+    "/Renovation/Avant/Avant-1.jpg",
+    "/Renovation/Avant/Avant-2.jpg",
+    "/Renovation/Avant/Avant-3.jpg",
+    "/Renovation/Avant/Avant-4.jpg",
+    "/Renovation/Avant/Avant-5.jpg",
   ],
   pendant: [
-    "/Renovation/Pendant/pendant-1.jpg",
-    "/Renovation/Pendant/pendant-2.jpg",
-    "/Renovation/Pendant/pendant-3.jpg",
+    "/Renovation/Pendant/Pendant-1.jpg",
+    "/Renovation/Pendant/Pendant-2.jpg",
+    "/Renovation/Pendant/Pendant-3.jpg",
   ],
-  apres: [
-    "/Renovation/Apres/apres-1.jpg",
-    "/Renovation/Apres/apres-2.jpg",
-    "/Renovation/Apres/apres-3.jpg",
-  ],
+  apres: [],
 };
 
 const devisMail = encodeURIComponent(`Bonjour,
@@ -197,19 +193,24 @@ export default function Home() {
             préparation, intervention et résultat final.
           </p>
 
-          <div className="mt-8 grid gap-6 md:grid-cols-3">
+          <div className="mt-8 grid gap-6 md:grid-cols-2">
             <PhotoBlock title="Avant travaux" items={photos.avant.slice(0, 3)} />
             <PhotoBlock
               title="Pendant travaux"
               items={photos.pendant.slice(0, 3)}
             />
-            <PhotoBlock title="Après travaux" items={photos.apres.slice(0, 3)} />
+
+            {photos.apres.length > 0 && (
+              <PhotoBlock
+                title="Après travaux"
+                items={photos.apres.slice(0, 3)}
+              />
+            )}
           </div>
 
           <p className="mt-6 rounded-2xl bg-white p-5 text-[#6f6258] shadow-sm ring-1 ring-[#d7c0a7]">
-            Les photos “après travaux” sont les plus importantes : elles
-            permettent de montrer le résultat final et le soin apporté à
-            l’intervention.
+            Les photos “après travaux” seront ajoutées progressivement pour
+            montrer le résultat final des interventions.
           </p>
         </div>
       </section>
