@@ -30,6 +30,39 @@ Disponibilités pour être rappelé :
 Merci.`);
 
 export default function Home() {
+  const gallerySections = [
+    {
+      title: "Rénovation — Avant travaux",
+      description: "Photos de l’état initial avant intervention.",
+      items: photos.renovationAvant,
+    },
+    {
+      title: "Rénovation — Pendant travaux",
+      description: "Photos prises pendant la préparation et l’intervention.",
+      items: photos.renovationPendant,
+    },
+    {
+      title: "Rénovation — Après travaux",
+      description: "Photos du résultat final après intervention.",
+      items: photos.renovationApres,
+    },
+    {
+      title: "Électricité",
+      description: "Interventions électriques, luminaires, prises et dépannage.",
+      items: photos.electricite,
+    },
+    {
+      title: "Peinture",
+      description: "Petites transformations, reprises et finitions peinture.",
+      items: photos.peinture,
+    },
+    {
+      title: "Antenne TV",
+      description: "Dépannage, diagnostic et interventions autour de l’antenne TV.",
+      items: photos.antenneTv,
+    },
+  ].filter((section) => section.items.length > 0);
+
   return (
     <main className="min-h-screen bg-[#f4ecdf] pb-24 text-[#2f261f] md:pb-0">
       <section className="px-5 py-12 md:py-20">
@@ -175,46 +208,31 @@ export default function Home() {
           <h2 className="text-3xl font-black">Réalisations</h2>
 
           <p className="mt-3 max-w-3xl leading-8 text-[#5f534a]">
-            Galerie mise à jour automatiquement à partir des photos ajoutées
-            dans les dossiers du site.
+            Les photos sont classées par type de chantier. Faites défiler chaque
+            galerie de gauche à droite pour voir toutes les images disponibles.
           </p>
 
-          <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            <PhotoBlock
-              title="Rénovation — Avant"
-              items={photos.renovationAvant.slice(0, 4)}
-            />
-
-            <PhotoBlock
-              title="Rénovation — Pendant"
-              items={photos.renovationPendant.slice(0, 4)}
-            />
-
-            <PhotoBlock
-              title="Rénovation — Après"
-              items={photos.renovationApres.slice(0, 4)}
-            />
-
-            <PhotoBlock
-              title="Électricité"
-              items={photos.electricite.slice(0, 4)}
-            />
-
-            <PhotoBlock
-              title="Peinture"
-              items={photos.peinture.slice(0, 4)}
-            />
-
-            <PhotoBlock
-              title="Antenne TV"
-              items={photos.antenneTv.slice(0, 4)}
-            />
+          <div className="mt-8 space-y-8">
+            {gallerySections.length > 0 ? (
+              gallerySections.map((section) => (
+                <GalleryCarousel
+                  key={section.title}
+                  title={section.title}
+                  description={section.description}
+                  items={section.items}
+                />
+              ))
+            ) : (
+              <div className="rounded-[2rem] bg-white p-6 text-[#6f6258] shadow-sm ring-1 ring-[#d7c0a7]">
+                Les photos de réalisations seront ajoutées progressivement.
+              </div>
+            )}
           </div>
 
-          <p className="mt-6 rounded-2xl bg-white p-5 text-[#6f6258] shadow-sm ring-1 ring-[#d7c0a7]">
-            Les photos les plus récentes remontent automatiquement en premier.
-            Pour garder une page rapide et lisible, seules quelques photos par
-            catégorie sont affichées sur l’accueil.
+          <p className="mt-8 rounded-2xl bg-white p-5 text-[#6f6258] shadow-sm ring-1 ring-[#d7c0a7]">
+            Les galeries se mettent à jour automatiquement avec la commande{" "}
+            <strong>npm run publish</strong>, après ajout de photos dans les
+            dossiers du site.
           </p>
         </div>
       </section>
@@ -482,27 +500,47 @@ function Step({
   );
 }
 
-function PhotoBlock({
+function GalleryCarousel({
   title,
+  description,
   items,
 }: {
   title: string;
+  description: string;
   items: readonly string[];
 }) {
-  if (items.length === 0) return null;
-
   return (
-    <div className="rounded-[2rem] bg-white p-4 shadow-md ring-1 ring-[#d7c0a7]">
-      <h3 className="mb-4 text-xl font-black text-[#b65f1a]">{title}</h3>
+    <div className="rounded-[2rem] bg-white p-5 shadow-md ring-1 ring-[#d7c0a7]">
+      <div className="mb-4 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h3 className="text-2xl font-black text-[#b65f1a]">{title}</h3>
+          <p className="mt-1 text-sm leading-6 text-[#6f6258]">
+            {description}
+          </p>
+        </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
+        <p className="text-sm font-bold text-[#6f6258]">
+          {items.length} photo{items.length > 1 ? "s" : ""} • faire défiler →
+        </p>
+      </div>
+
+      <div className="flex gap-4 overflow-x-auto scroll-smooth pb-4">
         {items.map((src, index) => (
-          <a key={src} href={src} target="_blank" rel="noopener noreferrer">
+          <a
+            key={src}
+            href={src}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="min-w-[78%] shrink-0 sm:min-w-[45%] lg:min-w-[30%]"
+          >
             <img
               src={src}
               alt={`${title} ${index + 1}`}
-              className="h-48 w-full rounded-2xl object-cover transition hover:scale-[1.02]"
+              className="h-64 w-full rounded-2xl object-cover shadow-sm ring-1 ring-[#eadac7] transition hover:scale-[1.01]"
             />
+            <p className="mt-2 text-center text-sm font-semibold text-[#6f6258]">
+              Photo {index + 1}
+            </p>
           </a>
         ))}
       </div>
