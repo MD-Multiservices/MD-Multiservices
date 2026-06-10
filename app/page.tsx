@@ -284,7 +284,8 @@ export default function Home() {
 
           <p className="mt-3 max-w-3xl leading-8 text-[#5f534a]">
             Les photos sont classées par type de chantier. Cliquez sur une photo
-            pour l’agrandir, puis utilisez les flèches pour passer à la suivante.
+            pour l’agrandir, puis utilisez les flèches ou le glissement tactile
+            pour passer à la suivante.
           </p>
 
           <div className="mt-8 space-y-8">
@@ -527,19 +528,19 @@ export default function Home() {
 
       {lightbox && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 text-white"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-3 text-white md:p-5"
           onClick={closeLightbox}
         >
           <div
-            className="relative flex h-full w-full max-w-6xl flex-col items-center justify-center"
+            className="relative flex h-full w-full max-w-7xl flex-col items-center justify-center"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="absolute left-0 right-0 top-0 z-10 flex items-center justify-between gap-4 p-2">
-              <div>
-                <p className="text-sm font-bold text-white/80">
+              <div className="rounded-2xl bg-black/40 px-4 py-2 backdrop-blur">
+                <p className="text-sm font-bold text-white/90">
                   {lightbox.title}
                 </p>
-                <p className="text-sm text-white/60">
+                <p className="text-xs text-white/70">
                   Photo {lightbox.index + 1} / {lightbox.items.length}
                 </p>
               </div>
@@ -547,7 +548,7 @@ export default function Home() {
               <button
                 type="button"
                 onClick={closeLightbox}
-                className="rounded-full bg-white px-4 py-2 text-lg font-black text-black"
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-2xl font-black text-black shadow-lg hover:bg-white"
                 aria-label="Fermer la galerie"
               >
                 ×
@@ -557,7 +558,7 @@ export default function Home() {
             <button
               type="button"
               onClick={previousPhoto}
-              className="absolute left-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/90 px-4 py-3 text-2xl font-black text-black shadow-lg md:left-6"
+              className="absolute left-2 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/85 text-3xl font-black leading-none text-black shadow-lg hover:bg-white md:left-6 md:h-12 md:w-12"
               aria-label="Photo précédente"
             >
               ‹
@@ -566,7 +567,7 @@ export default function Home() {
             <img
               src={lightbox.items[lightbox.index]}
               alt={`${lightbox.title} ${lightbox.index + 1}`}
-              className="max-h-[82vh] max-w-full rounded-2xl object-contain shadow-2xl"
+              className="max-h-[88vh] max-w-full rounded-2xl object-contain shadow-2xl"
               onTouchStart={(event) =>
                 setTouchStartX(event.changedTouches[0].clientX)
               }
@@ -578,14 +579,14 @@ export default function Home() {
             <button
               type="button"
               onClick={nextPhoto}
-              className="absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/90 px-4 py-3 text-2xl font-black text-black shadow-lg md:right-6"
+              className="absolute right-2 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/85 text-3xl font-black leading-none text-black shadow-lg hover:bg-white md:right-6 md:h-12 md:w-12"
               aria-label="Photo suivante"
             >
               ›
             </button>
 
-            <div className="absolute bottom-4 left-1/2 w-full max-w-3xl -translate-x-1/2 overflow-x-auto px-4">
-              <div className="flex justify-center gap-2">
+            <div className="absolute bottom-3 left-1/2 w-full max-w-xl -translate-x-1/2 overflow-x-auto px-4">
+              <div className="flex justify-center gap-1.5 rounded-2xl bg-black/35 px-3 py-2 backdrop-blur">
                 {lightbox.items.map((src, index) => (
                   <button
                     key={src}
@@ -595,7 +596,7 @@ export default function Home() {
                         current ? { ...current, index } : current
                       )
                     }
-                    className={`h-14 w-14 shrink-0 overflow-hidden rounded-xl ring-2 ${
+                    className={`h-9 w-9 shrink-0 overflow-hidden rounded-lg ring-2 md:h-10 md:w-10 ${
                       index === lightbox.index
                         ? "ring-[#f59e0b]"
                         : "ring-white/30"
