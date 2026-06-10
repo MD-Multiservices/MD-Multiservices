@@ -15,7 +15,6 @@ export const photos = {
     "/Renovation/Avant/Avant-1.jpg"
   ],
   "renovationPendant": [
-    "/Renovation/Pendant/Pendant-1.jpg",
     "/Renovation/Pendant/Pendant-3.jpg",
     "/Renovation/Pendant/Pendant-2.jpg",
     "/Renovation/Pendant/Pendant-4.jpg",
