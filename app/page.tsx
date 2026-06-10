@@ -1,21 +1,7 @@
+import { photos } from "./photos";
+
 const googleBusinessUrl = "https://share.google/VcY2B8sPoMXdcNlpc";
 const logoUrl = "/Logo/logo.jpg";
-
-const photos: { avant: string[]; pendant: string[]; apres: string[] } = {
-  avant: [
-    "/Renovation/Avant/Avant-1.jpg",
-    "/Renovation/Avant/Avant-2.jpg",
-    "/Renovation/Avant/Avant-3.jpg",
-    "/Renovation/Avant/Avant-4.jpg",
-    "/Renovation/Avant/Avant-5.jpg",
-  ],
-  pendant: [
-    "/Renovation/Pendant/Pendant-1.jpg",
-    "/Renovation/Pendant/Pendant-2.jpg",
-    "/Renovation/Pendant/Pendant-3.jpg",
-  ],
-  apres: [],
-};
 
 const devisMail = encodeURIComponent(`Bonjour,
 
@@ -27,7 +13,7 @@ Ville du chantier :
 Adresse approximative du chantier :
 
 Type d'intervention souhaitée :
-Électricité / Dépannage / Rénovation / Peinture / Sol PVC / Antenne TV / Autre
+Électricité / Dépannage / Rénovation légère / Peinture / Antenne TV / Petites réparations / Autre
 
 Description de la demande :
 
@@ -57,9 +43,9 @@ export default function Home() {
           </h1>
 
           <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-[#5f534a]">
-            Électricité, recherche de panne, antenne TV, peinture, sol PVC et
-            petites réparations du quotidien à La Seyne-sur-Mer, Toulon et
-            alentours.
+            Électricité, recherche de panne, antenne TV, peinture, petites
+            transformations et réparations du quotidien à La Seyne-sur-Mer,
+            Toulon et alentours.
           </p>
 
           <div className="mx-auto mt-7 max-w-2xl rounded-[2rem] bg-white p-5 shadow-md ring-1 ring-[#eadac7]">
@@ -137,12 +123,12 @@ export default function Home() {
             />
 
             <ServiceCard
-              title="Rénovation légère"
+              title="Petites transformations"
               items={[
                 "Peinture",
-                "Sol PVC / lino",
                 "Petites reprises",
                 "Préparation de support",
+                "Joints silicone",
                 "Petits travaux du quotidien",
               ]}
             />
@@ -189,28 +175,46 @@ export default function Home() {
           <h2 className="text-3xl font-black">Réalisations</h2>
 
           <p className="mt-3 max-w-3xl leading-8 text-[#5f534a]">
-            Quelques photos de chantiers permettent de voir les étapes :
-            préparation, intervention et résultat final.
+            Galerie mise à jour automatiquement à partir des photos ajoutées
+            dans les dossiers du site.
           </p>
 
-          <div className="mt-8 grid gap-6 md:grid-cols-2">
-            <PhotoBlock title="Avant travaux" items={photos.avant.slice(0, 3)} />
+          <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             <PhotoBlock
-              title="Pendant travaux"
-              items={photos.pendant.slice(0, 3)}
+              title="Rénovation — Avant"
+              items={photos.renovationAvant.slice(0, 4)}
             />
 
-            {photos.apres.length > 0 && (
-              <PhotoBlock
-                title="Après travaux"
-                items={photos.apres.slice(0, 3)}
-              />
-            )}
+            <PhotoBlock
+              title="Rénovation — Pendant"
+              items={photos.renovationPendant.slice(0, 4)}
+            />
+
+            <PhotoBlock
+              title="Rénovation — Après"
+              items={photos.renovationApres.slice(0, 4)}
+            />
+
+            <PhotoBlock
+              title="Électricité"
+              items={photos.electricite.slice(0, 4)}
+            />
+
+            <PhotoBlock
+              title="Peinture"
+              items={photos.peinture.slice(0, 4)}
+            />
+
+            <PhotoBlock
+              title="Antenne TV"
+              items={photos.antenneTv.slice(0, 4)}
+            />
           </div>
 
           <p className="mt-6 rounded-2xl bg-white p-5 text-[#6f6258] shadow-sm ring-1 ring-[#d7c0a7]">
-            Les photos “après travaux” seront ajoutées progressivement pour
-            montrer le résultat final des interventions.
+            Les photos les plus récentes remontent automatiquement en premier.
+            Pour garder une page rapide et lisible, seules quelques photos par
+            catégorie sont affichées sur l’accueil.
           </p>
         </div>
       </section>
@@ -329,12 +333,6 @@ export default function Home() {
               </div>
             ))}
           </div>
-
-          <p className="mt-6 rounded-2xl bg-white p-5 text-[#6f6258] shadow-sm ring-1 ring-[#eadac7]">
-            Pour une activité de déplacement chez les clients, il est préférable
-            d’afficher une zone d’intervention plutôt qu’une adresse personnelle
-            complète.
-          </p>
         </div>
       </section>
 
@@ -364,11 +362,6 @@ export default function Home() {
               📞 Appeler
             </a>
           </div>
-
-          <p className="mt-6 text-sm leading-6 text-stone-300">
-            Les avis clients et les photos de réalisations sont importants pour
-            rassurer les nouveaux clients.
-          </p>
         </div>
       </section>
 
@@ -489,18 +482,26 @@ function Step({
   );
 }
 
-function PhotoBlock({ title, items }: { title: string; items: string[] }) {
+function PhotoBlock({
+  title,
+  items,
+}: {
+  title: string;
+  items: readonly string[];
+}) {
+  if (items.length === 0) return null;
+
   return (
     <div className="rounded-[2rem] bg-white p-4 shadow-md ring-1 ring-[#d7c0a7]">
       <h3 className="mb-4 text-xl font-black text-[#b65f1a]">{title}</h3>
 
-      <div className="grid gap-3">
+      <div className="grid gap-3 sm:grid-cols-2">
         {items.map((src, index) => (
           <a key={src} href={src} target="_blank" rel="noopener noreferrer">
             <img
               src={src}
               alt={`${title} ${index + 1}`}
-              className="h-52 w-full rounded-2xl object-cover transition hover:scale-[1.02]"
+              className="h-48 w-full rounded-2xl object-cover transition hover:scale-[1.02]"
             />
           </a>
         ))}
