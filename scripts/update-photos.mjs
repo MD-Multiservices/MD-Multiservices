@@ -16,6 +16,9 @@ const folders = {
 
 const allowedExtensions = new Set([".jpg"]);
 
+// Les dossiers indiqués ici seront affichés dans l'ordre inverse.
+const reversedFolders = new Set(["renovationPendant"]);
+
 function walk(folderPath) {
   if (!fs.existsSync(folderPath)) return [];
 
@@ -56,9 +59,13 @@ const photos = {};
 for (const [key, folder] of Object.entries(folders)) {
   const folderPath = path.join(publicDir, folder);
 
-  photos[key] = walk(folderPath)
-    .sort((a, b) => b.modifiedAt - a.modifiedAt)
-    .map((file) => toPublicUrl(file.fullPath));
+  let files = walk(folderPath).sort((a, b) => b.modifiedAt - a.modifiedAt);
+
+  if (reversedFolders.has(key)) {
+    files = files.reverse();
+  }
+
+  photos[key] = files.map((file) => toPublicUrl(file.fullPath));
 }
 
 const fileContent = `// Fichier généré automatiquement.
