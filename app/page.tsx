@@ -1,7 +1,16 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { photos } from "./photos";
 
 const googleBusinessUrl = "https://share.google/VcY2B8sPoMXdcNlpc";
 const logoUrl = "/Logo/logo.jpg";
+
+type LightboxState = {
+  title: string;
+  items: readonly string[];
+  index: number;
+} | null;
 
 const devisMail = encodeURIComponent(`Bonjour,
 
@@ -30,25 +39,28 @@ Disponibilités pour être rappelé :
 Merci.`);
 
 export default function Home() {
+  const [lightbox, setLightbox] = useState<LightboxState>(null);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+
   const gallerySections = [
     {
       title: "Rénovation — Avant travaux",
-      description: "Photos de l’état initial avant intervention.",
+      description: "L’état initial avant préparation ou intervention.",
       items: photos.renovationAvant,
     },
     {
       title: "Rénovation — Pendant travaux",
-      description: "Photos prises pendant la préparation et l’intervention.",
+      description: "Les étapes de préparation et de transformation.",
       items: photos.renovationPendant,
     },
     {
       title: "Rénovation — Après travaux",
-      description: "Photos du résultat final après intervention.",
+      description: "Le résultat final après intervention.",
       items: photos.renovationApres,
     },
     {
       title: "Électricité",
-      description: "Interventions électriques, luminaires, prises et dépannage.",
+      description: "Interventions électriques, prises, luminaires et dépannage.",
       items: photos.electricite,
     },
     {
@@ -58,10 +70,73 @@ export default function Home() {
     },
     {
       title: "Antenne TV",
-      description: "Dépannage, diagnostic et interventions autour de l’antenne TV.",
+      description: "Diagnostic, dépannage et interventions autour de l’antenne TV.",
       items: photos.antenneTv,
     },
   ].filter((section) => section.items.length > 0);
+
+  function openLightbox(title: string, items: readonly string[], index: number) {
+    setLightbox({ title, items, index });
+  }
+
+  function closeLightbox() {
+    setLightbox(null);
+  }
+
+  function previousPhoto() {
+    setLightbox((current) => {
+      if (!current) return current;
+
+      return {
+        ...current,
+        index:
+          current.index === 0 ? current.items.length - 1 : current.index - 1,
+      };
+    });
+  }
+
+  function nextPhoto() {
+    setLightbox((current) => {
+      if (!current) return current;
+
+      return {
+        ...current,
+        index:
+          current.index === current.items.length - 1 ? 0 : current.index + 1,
+      };
+    });
+  }
+
+  useEffect(() => {
+    if (!lightbox) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") closeLightbox();
+      if (event.key === "ArrowLeft") previousPhoto();
+      if (event.key === "ArrowRight") nextPhoto();
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [lightbox]);
+
+  function handleTouchEnd(endX: number) {
+    if (touchStartX === null) return;
+
+    const difference = touchStartX - endX;
+
+    if (difference > 50) nextPhoto();
+    if (difference < -50) previousPhoto();
+
+    setTouchStartX(null);
+  }
 
   return (
     <main className="min-h-screen bg-[#f4ecdf] pb-24 text-[#2f261f] md:pb-0">
@@ -208,8 +283,8 @@ export default function Home() {
           <h2 className="text-3xl font-black">Réalisations</h2>
 
           <p className="mt-3 max-w-3xl leading-8 text-[#5f534a]">
-            Les photos sont classées par type de chantier. Faites défiler chaque
-            galerie de gauche à droite pour voir toutes les images disponibles.
+            Les photos sont classées par type de chantier. Cliquez sur une photo
+            pour l’agrandir, puis utilisez les flèches pour passer à la suivante.
           </p>
 
           <div className="mt-8 space-y-8">
@@ -220,6 +295,7 @@ export default function Home() {
                   title={section.title}
                   description={section.description}
                   items={section.items}
+                  onOpen={openLightbox}
                 />
               ))
             ) : (
@@ -228,12 +304,6 @@ export default function Home() {
               </div>
             )}
           </div>
-
-          <p className="mt-8 rounded-2xl bg-white p-5 text-[#6f6258] shadow-sm ring-1 ring-[#d7c0a7]">
-            Les galeries se mettent à jour automatiquement avec la commande{" "}
-            <strong>npm run publish</strong>, après ajout de photos dans les
-            dossiers du site.
-          </p>
         </div>
       </section>
 
@@ -454,6 +524,96 @@ export default function Home() {
           </a>
         </div>
       </nav>
+
+      {lightbox && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 text-white"
+          onClick={closeLightbox}
+        >
+          <div
+            className="relative flex h-full w-full max-w-6xl flex-col items-center justify-center"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="absolute left-0 right-0 top-0 z-10 flex items-center justify-between gap-4 p-2">
+              <div>
+                <p className="text-sm font-bold text-white/80">
+                  {lightbox.title}
+                </p>
+                <p className="text-sm text-white/60">
+                  Photo {lightbox.index + 1} / {lightbox.items.length}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={closeLightbox}
+                className="rounded-full bg-white px-4 py-2 text-lg font-black text-black"
+                aria-label="Fermer la galerie"
+              >
+                ×
+              </button>
+            </div>
+
+            <button
+              type="button"
+              onClick={previousPhoto}
+              className="absolute left-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/90 px-4 py-3 text-2xl font-black text-black shadow-lg md:left-6"
+              aria-label="Photo précédente"
+            >
+              ‹
+            </button>
+
+            <img
+              src={lightbox.items[lightbox.index]}
+              alt={`${lightbox.title} ${lightbox.index + 1}`}
+              className="max-h-[82vh] max-w-full rounded-2xl object-contain shadow-2xl"
+              onTouchStart={(event) =>
+                setTouchStartX(event.changedTouches[0].clientX)
+              }
+              onTouchEnd={(event) =>
+                handleTouchEnd(event.changedTouches[0].clientX)
+              }
+            />
+
+            <button
+              type="button"
+              onClick={nextPhoto}
+              className="absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/90 px-4 py-3 text-2xl font-black text-black shadow-lg md:right-6"
+              aria-label="Photo suivante"
+            >
+              ›
+            </button>
+
+            <div className="absolute bottom-4 left-1/2 w-full max-w-3xl -translate-x-1/2 overflow-x-auto px-4">
+              <div className="flex justify-center gap-2">
+                {lightbox.items.map((src, index) => (
+                  <button
+                    key={src}
+                    type="button"
+                    onClick={() =>
+                      setLightbox((current) =>
+                        current ? { ...current, index } : current
+                      )
+                    }
+                    className={`h-14 w-14 shrink-0 overflow-hidden rounded-xl ring-2 ${
+                      index === lightbox.index
+                        ? "ring-[#f59e0b]"
+                        : "ring-white/30"
+                    }`}
+                    aria-label={`Aller à la photo ${index + 1}`}
+                  >
+                    <img
+                      src={src}
+                      alt=""
+                      className="h-full w-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
@@ -504,10 +664,12 @@ function GalleryCarousel({
   title,
   description,
   items,
+  onOpen,
 }: {
   title: string;
   description: string;
   items: readonly string[];
+  onOpen: (title: string, items: readonly string[], index: number) => void;
 }) {
   return (
     <div className="rounded-[2rem] bg-white p-5 shadow-md ring-1 ring-[#d7c0a7]">
@@ -520,18 +682,17 @@ function GalleryCarousel({
         </div>
 
         <p className="text-sm font-bold text-[#6f6258]">
-          {items.length} photo{items.length > 1 ? "s" : ""} • faire défiler →
+          {items.length} photo{items.length > 1 ? "s" : ""} • glisser →
         </p>
       </div>
 
-      <div className="flex gap-4 overflow-x-auto scroll-smooth pb-4">
+      <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-4">
         {items.map((src, index) => (
-          <a
+          <button
             key={src}
-            href={src}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="min-w-[78%] shrink-0 sm:min-w-[45%] lg:min-w-[30%]"
+            type="button"
+            onClick={() => onOpen(title, items, index)}
+            className="min-w-[82%] shrink-0 snap-center text-left sm:min-w-[46%] lg:min-w-[31%]"
           >
             <img
               src={src}
@@ -541,7 +702,7 @@ function GalleryCarousel({
             <p className="mt-2 text-center text-sm font-semibold text-[#6f6258]">
               Photo {index + 1}
             </p>
-          </a>
+          </button>
         ))}
       </div>
     </div>
