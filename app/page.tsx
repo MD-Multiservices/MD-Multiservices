@@ -1,5 +1,7 @@
 "use client";
 
+import dynamic from "next/dynamic";
+
 import {
   useEffect,
   useRef,
@@ -7,6 +9,18 @@ import {
 } from "react";
 
 import { photos } from "./photos";
+
+const InterventionMap = dynamic(
+  () => import("./InterventionMap"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-[350px] items-center justify-center rounded-[1.5rem] bg-[#f4ecdf] text-center font-semibold text-[#6f6258] md:h-[430px]">
+        Chargement de la carte…
+      </div>
+    ),
+  },
+);
 
 const googleBusinessUrl =
   "https://share.google/VcY2B8sPoMXdcNlpc";
@@ -112,7 +126,9 @@ export default function Home() {
   const selectedElectricalGallery =
     electricalGalleries[electricalCategory];
 
-  function selectMainCategory(category: MainCategory) {
+  function selectMainCategory(
+    category: MainCategory,
+  ) {
     setActiveCategory(category);
 
     window.setTimeout(() => {
@@ -164,7 +180,8 @@ export default function Home() {
       return {
         ...current,
         index:
-          current.index === current.items.length - 1
+          current.index ===
+          current.items.length - 1
             ? 0
             : current.index + 1,
       };
@@ -181,7 +198,9 @@ export default function Home() {
 
     document.body.style.overflow = "hidden";
 
-    function handleKeyDown(event: KeyboardEvent) {
+    function handleKeyDown(
+      event: KeyboardEvent,
+    ) {
       if (event.key === "Escape") {
         closeLightbox();
       }
@@ -394,7 +413,9 @@ export default function Home() {
               title="Travaux électriques"
               description="Dépannage, luminaires, prises, interrupteurs et tableaux."
               badge="Activité principale"
-              active={activeCategory === "electricite"}
+              active={
+                activeCategory === "electricite"
+              }
               onClick={() =>
                 selectMainCategory("electricite")
               }
@@ -403,7 +424,9 @@ export default function Home() {
             <CategoryCard
               title="Peinture"
               description="Préparation, petites reprises et finitions."
-              active={activeCategory === "peinture"}
+              active={
+                activeCategory === "peinture"
+              }
               onClick={() =>
                 selectMainCategory("peinture")
               }
@@ -412,7 +435,9 @@ export default function Home() {
             <CategoryCard
               title="Rénovation"
               description="Petites rénovations et projets étudiés sur mesure."
-              active={activeCategory === "renovation"}
+              active={
+                activeCategory === "renovation"
+              }
               onClick={() =>
                 selectMainCategory("renovation")
               }
@@ -423,15 +448,19 @@ export default function Home() {
             ref={galleryContentRef}
             className="scroll-mt-6 pt-8"
           >
-            {activeCategory === "electricite" && (
+            {activeCategory ===
+              "electricite" && (
               <div className="rounded-[2rem] bg-white p-5 shadow-md ring-1 ring-[#d7c0a7]">
                 <div className="flex flex-wrap gap-2">
                   <PillButton
                     active={
-                      electricalCategory === "depannage"
+                      electricalCategory ===
+                      "depannage"
                     }
                     onClick={() =>
-                      setElectricalCategory("depannage")
+                      setElectricalCategory(
+                        "depannage",
+                      )
                     }
                   >
                     Dépannage
@@ -439,10 +468,13 @@ export default function Home() {
 
                   <PillButton
                     active={
-                      electricalCategory === "luminaires"
+                      electricalCategory ===
+                      "luminaires"
                     }
                     onClick={() =>
-                      setElectricalCategory("luminaires")
+                      setElectricalCategory(
+                        "luminaires",
+                      )
                     }
                   >
                     Luminaires
@@ -450,10 +482,13 @@ export default function Home() {
 
                   <PillButton
                     active={
-                      electricalCategory === "prises"
+                      electricalCategory ===
+                      "prises"
                     }
                     onClick={() =>
-                      setElectricalCategory("prises")
+                      setElectricalCategory(
+                        "prises",
+                      )
                     }
                   >
                     Prises et interrupteurs
@@ -461,10 +496,13 @@ export default function Home() {
 
                   <PillButton
                     active={
-                      electricalCategory === "tableaux"
+                      electricalCategory ===
+                      "tableaux"
                     }
                     onClick={() =>
-                      setElectricalCategory("tableaux")
+                      setElectricalCategory(
+                        "tableaux",
+                      )
                     }
                   >
                     Tableaux
@@ -497,15 +535,19 @@ export default function Home() {
               />
             )}
 
-            {activeCategory === "renovation" && (
+            {activeCategory ===
+              "renovation" && (
               <div className="rounded-[2rem] bg-white p-5 shadow-md ring-1 ring-[#d7c0a7]">
                 <div className="flex flex-wrap gap-2">
                   <PillButton
                     active={
-                      renovationCategory === "petites"
+                      renovationCategory ===
+                      "petites"
                     }
                     onClick={() =>
-                      setRenovationCategory("petites")
+                      setRenovationCategory(
+                        "petites",
+                      )
                     }
                   >
                     Petites rénovations
@@ -513,17 +555,21 @@ export default function Home() {
 
                   <PillButton
                     active={
-                      renovationCategory === "surMesure"
+                      renovationCategory ===
+                      "surMesure"
                     }
                     onClick={() =>
-                      setRenovationCategory("surMesure")
+                      setRenovationCategory(
+                        "surMesure",
+                      )
                     }
                   >
                     Rénovations sur mesure
                   </PillButton>
                 </div>
 
-                {renovationCategory === "petites" && (
+                {renovationCategory ===
+                  "petites" && (
                   <div className="mt-6">
                     <GalleryCarousel
                       title="Petites rénovations"
@@ -545,12 +591,14 @@ export default function Home() {
                       </p>
 
                       <p className="mt-2 leading-7">
-                        Les rénovations plus importantes
-                        sont acceptées ponctuellement,
-                        après visite, étude de faisabilité
-                        et devis détaillé. Le budget dépend
-                        de l’état du support, des fournitures
-                        et de l’ampleur des travaux.
+                        Les rénovations plus
+                        importantes sont acceptées
+                        ponctuellement, après visite,
+                        étude de faisabilité et devis
+                        détaillé. Le budget dépend de
+                        l’état du support, des
+                        fournitures et de l’ampleur
+                        des travaux.
                       </p>
                     </div>
 
@@ -593,9 +641,11 @@ export default function Home() {
                         .renovationSurMesureApres
                         .length === 0 && (
                         <p className="rounded-2xl bg-[#fff8ed] p-4 text-sm leading-6 text-[#6f6258]">
-                          Ce chantier est actuellement en
-                          cours. Les photos du résultat final
-                          seront ajoutées à son achèvement.
+                          Ce chantier est
+                          actuellement en cours. Les
+                          photos du résultat final
+                          seront ajoutées à son
+                          achèvement.
                         </p>
                       )}
                   </div>
@@ -635,15 +685,9 @@ export default function Home() {
               <li>
                 📍 Ville et adresse approximative
               </li>
-              <li>
-                📸 Photos du problème
-              </li>
-              <li>
-                🧰 Type d’intervention
-              </li>
-              <li>
-                ⏱️ Délai souhaité
-              </li>
+              <li>📸 Photos du problème</li>
+              <li>🧰 Type d’intervention</li>
+              <li>⏱️ Délai souhaité</li>
               <li>
                 📞 Disponibilités pour être rappelé
               </li>
@@ -676,17 +720,74 @@ export default function Home() {
 
       <section className="px-5 py-14">
         <div className="mx-auto max-w-6xl">
-          <h2 className="text-3xl font-black">
-            Zone d’intervention
-          </h2>
+          <div className="max-w-3xl">
+            <p className="text-sm font-black uppercase tracking-widest text-[#b65f1a]">
+              Intervention locale
+            </p>
 
-          <p className="mt-4 leading-8 text-[#6f6258]">
-            La Seyne-sur-Mer, Toulon,
-            Six-Fours-les-Plages, Ollioules,
-            Saint-Mandrier, La Garde,
-            La Valette-du-Var, Le Pradet et les
-            communes alentour.
-          </p>
+            <h2 className="mt-3 text-3xl font-black">
+              Zone habituelle d’intervention
+            </h2>
+
+            <p className="mt-4 leading-8 text-[#6f6258]">
+              La zone colorée représente un périmètre
+              indicatif d’environ 25 kilomètres autour de
+              La Seyne-sur-Mer. Le déplacement est toujours
+              confirmé avant l’intervention.
+            </p>
+          </div>
+
+          <div className="mt-8 grid gap-6 lg:grid-cols-[1.35fr_0.85fr]">
+            <div className="overflow-hidden rounded-[2rem] bg-white p-3 shadow-md ring-1 ring-[#eadac7]">
+              <InterventionMap />
+
+              <p className="px-3 pb-2 pt-4 text-center text-sm leading-6 text-[#6f6258]">
+                Zone indicative : le temps de trajet et la
+                nature de l’intervention sont également
+                pris en compte.
+              </p>
+            </div>
+
+            <div className="rounded-[2rem] bg-[#2f261f] p-7 text-white shadow-md">
+              <span className="inline-block rounded-full bg-white/10 px-4 py-2 text-sm font-black text-[#f5b56d]">
+                Environ 25 km autour de La Seyne-sur-Mer
+              </span>
+
+              <h3 className="mt-5 text-2xl font-black">
+                Communes principalement desservies
+              </h3>
+
+              <ul className="mt-5 grid gap-3 text-stone-200 sm:grid-cols-2 lg:grid-cols-1">
+                <li>📍 La Seyne-sur-Mer</li>
+                <li>📍 Toulon</li>
+                <li>📍 Six-Fours-les-Plages</li>
+                <li>📍 Ollioules</li>
+                <li>📍 Saint-Mandrier-sur-Mer</li>
+                <li>📍 La Garde</li>
+                <li>📍 La Valette-du-Var</li>
+                <li>📍 Le Pradet</li>
+              </ul>
+
+              <div className="mt-6 rounded-2xl bg-white/10 p-4">
+                <p className="font-black">
+                  Votre commune est plus éloignée ?
+                </p>
+
+                <p className="mt-2 text-sm leading-6 text-stone-200">
+                  Les déplacements hors de cette zone
+                  peuvent être étudiés selon la nature,
+                  la durée et le montant des travaux.
+                </p>
+              </div>
+
+              <a
+                href="tel:0768092153"
+                className="mt-6 block rounded-full bg-[#b65f1a] px-6 py-4 text-center font-black text-white shadow-md hover:bg-[#934812]"
+              >
+                📞 Vérifier ma commune
+              </a>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -760,8 +861,8 @@ export default function Home() {
         </p>
 
         <p>
-          Électricité • Dépannage • Peinture •
-          Petites rénovations
+          Électricité • Dépannage • Peinture • Petites
+          rénovations
         </p>
 
         <p className="mt-2">
@@ -841,19 +942,23 @@ export default function Home() {
             </button>
 
             <img
-              src={lightbox.items[lightbox.index]}
+              src={
+                lightbox.items[lightbox.index]
+              }
               alt={`${lightbox.title} ${
                 lightbox.index + 1
               }`}
               className="max-h-[88vh] max-w-full rounded-2xl object-contain shadow-2xl"
               onTouchStart={(event) =>
                 setTouchStartX(
-                  event.changedTouches[0].clientX,
+                  event.changedTouches[0]
+                    .clientX,
                 )
               }
               onTouchEnd={(event) =>
                 handleTouchEnd(
-                  event.changedTouches[0].clientX,
+                  event.changedTouches[0]
+                    .clientX,
                 )
               }
             />
@@ -875,17 +980,19 @@ export default function Home() {
                       key={src}
                       type="button"
                       onClick={() =>
-                        setLightbox((current) =>
-                          current
-                            ? {
-                                ...current,
-                                index,
-                              }
-                            : current,
+                        setLightbox(
+                          (current) =>
+                            current
+                              ? {
+                                  ...current,
+                                  index,
+                                }
+                              : current,
                         )
                       }
                       className={`h-9 w-9 shrink-0 overflow-hidden rounded-lg ring-2 ${
-                        index === lightbox.index
+                        index ===
+                        lightbox.index
                           ? "ring-[#f59e0b]"
                           : "ring-white/30"
                       }`}
@@ -1080,7 +1187,9 @@ function GalleryCarousel({
   const carouselRef =
     useRef<HTMLDivElement>(null);
 
-  function scroll(direction: "left" | "right") {
+  function scroll(
+    direction: "left" | "right",
+  ) {
     const element = carouselRef.current;
 
     if (!element) {
@@ -1122,7 +1231,9 @@ function GalleryCarousel({
 
             <button
               type="button"
-              onClick={() => scroll("right")}
+              onClick={() =>
+                scroll("right")
+              }
               className="flex h-10 w-10 items-center justify-center rounded-full bg-[#b65f1a] text-2xl font-black text-white shadow-sm"
               aria-label="Défiler vers la droite"
             >
@@ -1148,13 +1259,19 @@ function GalleryCarousel({
                 key={src}
                 type="button"
                 onClick={() =>
-                  onOpen(title, items, index)
+                  onOpen(
+                    title,
+                    items,
+                    index,
+                  )
                 }
                 className="min-w-[84%] shrink-0 snap-center text-left sm:min-w-[47%] lg:min-w-[31%]"
               >
                 <img
                   src={src}
-                  alt={`${title} ${index + 1}`}
+                  alt={`${title} ${
+                    index + 1
+                  }`}
                   loading="lazy"
                   className="h-64 w-full rounded-2xl object-cover shadow-sm ring-1 ring-[#eadac7] transition hover:scale-[1.01]"
                 />
