@@ -1,10 +1,32 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
 import { photos } from "./photos";
 
-const googleBusinessUrl = "https://share.google/VcY2B8sPoMXdcNlpc";
+const googleBusinessUrl =
+  "https://share.google/VcY2B8sPoMXdcNlpc";
+
 const logoUrl = "/Logo/logo.jpg";
+
+type MainCategory =
+  | "electricite"
+  | "peinture"
+  | "renovation";
+
+type ElectricalCategory =
+  | "depannage"
+  | "luminaires"
+  | "prises"
+  | "tableaux";
+
+type RenovationCategory =
+  | "petites"
+  | "surMesure";
 
 type LightboxState = {
   title: string;
@@ -21,8 +43,8 @@ Téléphone :
 Ville du chantier :
 Adresse approximative du chantier :
 
-Type d'intervention souhaitée :
-Électricité / Dépannage / Rénovation légère / Peinture / Antenne TV / Petites réparations / Autre
+Type d’intervention souhaitée :
+Électricité / Dépannage / Luminaire / Prise / Tableau électrique / Peinture / Petite rénovation / Autre
 
 Description de la demande :
 
@@ -39,44 +61,78 @@ Disponibilités pour être rappelé :
 Merci.`);
 
 export default function Home() {
-  const [lightbox, setLightbox] = useState<LightboxState>(null);
-  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [activeCategory, setActiveCategory] =
+    useState<MainCategory>("electricite");
 
-  const gallerySections = [
-    {
-      title: "Rénovation — Avant travaux",
-      description: "L’état initial avant préparation ou intervention.",
-      items: photos.renovationAvant,
-    },
-    {
-      title: "Rénovation — Pendant travaux",
-      description: "Les étapes de préparation et de transformation.",
-      items: photos.renovationPendant,
-    },
-    {
-      title: "Rénovation — Après travaux",
-      description: "Le résultat final après intervention.",
-      items: photos.renovationApres,
-    },
-    {
-      title: "Électricité",
-      description: "Interventions électriques, prises, luminaires et dépannage.",
-      items: photos.electricite,
-    },
-    {
-      title: "Peinture",
-      description: "Petites transformations, reprises et finitions peinture.",
-      items: photos.peinture,
-    },
-    {
-      title: "Antenne TV",
-      description: "Diagnostic, dépannage et interventions autour de l’antenne TV.",
-      items: photos.antenneTv,
-    },
-  ].filter((section) => section.items.length > 0);
+  const [electricalCategory, setElectricalCategory] =
+    useState<ElectricalCategory>("depannage");
 
-  function openLightbox(title: string, items: readonly string[], index: number) {
-    setLightbox({ title, items, index });
+  const [renovationCategory, setRenovationCategory] =
+    useState<RenovationCategory>("petites");
+
+  const [lightbox, setLightbox] =
+    useState<LightboxState>(null);
+
+  const [touchStartX, setTouchStartX] =
+    useState<number | null>(null);
+
+  const galleryContentRef =
+    useRef<HTMLDivElement>(null);
+
+  const electricalGalleries = {
+    depannage: {
+      title: "Dépannage électrique",
+      description:
+        "Recherche de panne, diagnostic et interventions de dépannage.",
+      items: photos.electriciteDepannage,
+    },
+
+    luminaires: {
+      title: "Luminaires et éclairage",
+      description:
+        "Pose et remplacement de luminaires, appliques et éclairages.",
+      items: photos.electriciteLuminaires,
+    },
+
+    prises: {
+      title: "Prises et interrupteurs",
+      description:
+        "Remplacement, réparation et installation de prises ou interrupteurs.",
+      items: photos.electricitePrises,
+    },
+
+    tableaux: {
+      title: "Tableaux électriques",
+      description:
+        "Interventions ponctuelles et remplacement d’éléments du tableau.",
+      items: photos.electriciteTableaux,
+    },
+  } as const;
+
+  const selectedElectricalGallery =
+    electricalGalleries[electricalCategory];
+
+  function selectMainCategory(category: MainCategory) {
+    setActiveCategory(category);
+
+    window.setTimeout(() => {
+      galleryContentRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 50);
+  }
+
+  function openLightbox(
+    title: string,
+    items: readonly string[],
+    index: number,
+  ) {
+    setLightbox({
+      title,
+      items,
+      index,
+    });
   }
 
   function closeLightbox() {
@@ -85,55 +141,90 @@ export default function Home() {
 
   function previousPhoto() {
     setLightbox((current) => {
-      if (!current) return current;
+      if (!current) {
+        return current;
+      }
 
       return {
         ...current,
         index:
-          current.index === 0 ? current.items.length - 1 : current.index - 1,
+          current.index === 0
+            ? current.items.length - 1
+            : current.index - 1,
       };
     });
   }
 
   function nextPhoto() {
     setLightbox((current) => {
-      if (!current) return current;
+      if (!current) {
+        return current;
+      }
 
       return {
         ...current,
         index:
-          current.index === current.items.length - 1 ? 0 : current.index + 1,
+          current.index === current.items.length - 1
+            ? 0
+            : current.index + 1,
       };
     });
   }
 
   useEffect(() => {
-    if (!lightbox) return;
+    if (!lightbox) {
+      return;
+    }
 
-    const previousOverflow = document.body.style.overflow;
+    const previousOverflow =
+      document.body.style.overflow;
+
     document.body.style.overflow = "hidden";
 
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") closeLightbox();
-      if (event.key === "ArrowLeft") previousPhoto();
-      if (event.key === "ArrowRight") nextPhoto();
+      if (event.key === "Escape") {
+        closeLightbox();
+      }
+
+      if (event.key === "ArrowLeft") {
+        previousPhoto();
+      }
+
+      if (event.key === "ArrowRight") {
+        nextPhoto();
+      }
     }
 
-    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener(
+      "keydown",
+      handleKeyDown,
+    );
 
     return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow =
+        previousOverflow;
+
+      window.removeEventListener(
+        "keydown",
+        handleKeyDown,
+      );
     };
   }, [lightbox]);
 
   function handleTouchEnd(endX: number) {
-    if (touchStartX === null) return;
+    if (touchStartX === null) {
+      return;
+    }
 
     const difference = touchStartX - endX;
 
-    if (difference > 50) nextPhoto();
-    if (difference < -50) previousPhoto();
+    if (difference > 50) {
+      nextPhoto();
+    }
+
+    if (difference < -50) {
+      previousPhoto();
+    }
 
     setTouchStartX(null);
   }
@@ -147,22 +238,25 @@ export default function Home() {
           </p>
 
           <h1 className="mx-auto mt-5 max-w-4xl text-4xl font-black leading-tight md:text-6xl">
-            Un artisan local pour vos dépannages et petits travaux dans le Var
+            Dépannage, électricité et petits travaux :
+            une réponse claire près de chez vous
           </h1>
 
           <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-[#5f534a]">
-            Électricité, recherche de panne, antenne TV, peinture, petites
-            transformations et réparations du quotidien à La Seyne-sur-Mer,
-            Toulon et alentours.
+            Recherche de panne, luminaires, prises,
+            interrupteurs, antenne TV, peinture et petites
+            transformations à La Seyne-sur-Mer, Toulon et
+            dans les communes alentour.
           </p>
 
           <div className="mx-auto mt-7 max-w-2xl rounded-[2rem] bg-white p-5 shadow-md ring-1 ring-[#eadac7]">
-            <p className="text-lg font-black text-[#2f261f]">
+            <p className="text-lg font-black">
               Besoin d’une intervention ?
             </p>
+
             <p className="mt-2 text-[#6f6258]">
-              Le plus simple est d’appeler directement ou d’envoyer quelques
-              photos du problème.
+              Appelez directement ou envoyez quelques
+              photos pour une première évaluation.
             </p>
 
             <a
@@ -200,44 +294,49 @@ export default function Home() {
 
       <section className="bg-[#fff8ed] px-5 py-14">
         <div className="mx-auto max-w-6xl">
-          <h2 className="text-3xl font-black">Services proposés</h2>
+          <h2 className="text-3xl font-black">
+            Services proposés
+          </h2>
 
           <p className="mt-3 max-w-3xl leading-8 text-[#6f6258]">
-            Les interventions sont étudiées selon l’état réel du chantier. Le
-            prix est proposé au forfait après échange ou diagnostic.
+            L’électricité et le dépannage constituent
+            l’activité principale. Les autres travaux sont
+            étudiés selon leur ampleur et les contraintes
+            du chantier.
           </p>
 
           <div className="mt-8 grid gap-5 md:grid-cols-3">
             <ServiceCard
               title="Électricité"
+              badge="Activité principale"
               items={[
                 "Recherche de panne électrique",
-                "Remplacement de prises",
-                "Remplacement d’interrupteurs",
-                "Pose de luminaires et appliques",
-                "Petites interventions électriques",
+                "Prises et interrupteurs",
+                "Luminaires et appliques",
+                "Interventions sur tableau",
+                "Dépannage sur rendez-vous",
               ]}
             />
 
             <ServiceCard
-              title="Dépannage"
+              title="Peinture"
               items={[
-                "Antenne TV",
-                "Diagnostic simple",
-                "Petites réparations",
-                "Aide au repérage du problème",
-                "Intervention sur rendez-vous",
-              ]}
-            />
-
-            <ServiceCard
-              title="Petites transformations"
-              items={[
-                "Peinture",
+                "Préparation des supports",
                 "Petites reprises",
-                "Préparation de support",
+                "Peinture murs et plafonds",
+                "Finitions",
+                "Interventions ponctuelles",
+              ]}
+            />
+
+            <ServiceCard
+              title="Petites rénovations"
+              items={[
+                "Réparations du quotidien",
                 "Joints silicone",
-                "Petits travaux du quotidien",
+                "Petites transformations",
+                "Reprises d’enduit",
+                "Travaux étudiés sur devis",
               ]}
             />
           </div>
@@ -246,33 +345,33 @@ export default function Home() {
 
       <section className="px-5 py-14">
         <div className="mx-auto max-w-6xl">
-          <h2 className="text-3xl font-black">Comment ça se passe ?</h2>
-
-          <p className="mt-3 max-w-3xl leading-8 text-[#6f6258]">
-            Le but est de rester simple : comprendre le besoin, vérifier si
-            l’intervention est possible, puis proposer une solution claire.
-          </p>
+          <h2 className="text-3xl font-black">
+            Comment ça se passe ?
+          </h2>
 
           <div className="mt-8 grid gap-5 md:grid-cols-4">
             <Step
               number="1"
-              title="Vous appelez"
-              text="Ou vous envoyez un message avec quelques explications."
+              title="Vous contactez"
+              text="Par téléphone, WhatsApp ou email."
             />
+
             <Step
               number="2"
               title="Vous envoyez des photos"
-              text="Cela permet d’évaluer plus vite le type d’intervention."
+              text="Elles permettent de mieux comprendre la demande."
             />
+
             <Step
               number="3"
               title="Le besoin est étudié"
-              text="Je vérifie si l’intervention entre dans mon champ d’action."
+              text="Je vérifie la faisabilité et les contraintes."
             />
+
             <Step
               number="4"
-              title="Devis au forfait"
-              text="Le prix est annoncé avant intervention, selon le chantier."
+              title="Un forfait est proposé"
+              text="Le prix est annoncé avant l’intervention."
             />
           </div>
         </div>
@@ -280,28 +379,227 @@ export default function Home() {
 
       <section className="bg-[#eadac7] px-5 py-14">
         <div className="mx-auto max-w-6xl">
-          <h2 className="text-3xl font-black">Réalisations</h2>
+          <h2 className="text-3xl font-black">
+            Réalisations
+          </h2>
 
           <p className="mt-3 max-w-3xl leading-8 text-[#5f534a]">
-            Les photos sont classées par type de chantier. Cliquez sur une photo
-            pour l’agrandir, puis utilisez les flèches ou le glissement tactile
-            pour passer à la suivante.
+            Choisissez une famille de travaux, puis une
+            sous-catégorie pour consulter les photos
+            correspondantes.
           </p>
 
-          <div className="mt-8 space-y-8">
-            {gallerySections.length > 0 ? (
-              gallerySections.map((section) => (
-                <GalleryCarousel
-                  key={section.title}
-                  title={section.title}
-                  description={section.description}
-                  items={section.items}
-                  onOpen={openLightbox}
-                />
-              ))
-            ) : (
-              <div className="rounded-[2rem] bg-white p-6 text-[#6f6258] shadow-sm ring-1 ring-[#d7c0a7]">
-                Les photos de réalisations seront ajoutées progressivement.
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
+            <CategoryCard
+              title="Travaux électriques"
+              description="Dépannage, luminaires, prises, interrupteurs et tableaux."
+              badge="Activité principale"
+              active={activeCategory === "electricite"}
+              onClick={() =>
+                selectMainCategory("electricite")
+              }
+            />
+
+            <CategoryCard
+              title="Peinture"
+              description="Préparation, petites reprises et finitions."
+              active={activeCategory === "peinture"}
+              onClick={() =>
+                selectMainCategory("peinture")
+              }
+            />
+
+            <CategoryCard
+              title="Rénovation"
+              description="Petites rénovations et projets étudiés sur mesure."
+              active={activeCategory === "renovation"}
+              onClick={() =>
+                selectMainCategory("renovation")
+              }
+            />
+          </div>
+
+          <div
+            ref={galleryContentRef}
+            className="scroll-mt-6 pt-8"
+          >
+            {activeCategory === "electricite" && (
+              <div className="rounded-[2rem] bg-white p-5 shadow-md ring-1 ring-[#d7c0a7]">
+                <div className="flex flex-wrap gap-2">
+                  <PillButton
+                    active={
+                      electricalCategory === "depannage"
+                    }
+                    onClick={() =>
+                      setElectricalCategory("depannage")
+                    }
+                  >
+                    Dépannage
+                  </PillButton>
+
+                  <PillButton
+                    active={
+                      electricalCategory === "luminaires"
+                    }
+                    onClick={() =>
+                      setElectricalCategory("luminaires")
+                    }
+                  >
+                    Luminaires
+                  </PillButton>
+
+                  <PillButton
+                    active={
+                      electricalCategory === "prises"
+                    }
+                    onClick={() =>
+                      setElectricalCategory("prises")
+                    }
+                  >
+                    Prises et interrupteurs
+                  </PillButton>
+
+                  <PillButton
+                    active={
+                      electricalCategory === "tableaux"
+                    }
+                    onClick={() =>
+                      setElectricalCategory("tableaux")
+                    }
+                  >
+                    Tableaux
+                  </PillButton>
+                </div>
+
+                <div className="mt-6">
+                  <GalleryCarousel
+                    title={
+                      selectedElectricalGallery.title
+                    }
+                    description={
+                      selectedElectricalGallery.description
+                    }
+                    items={
+                      selectedElectricalGallery.items
+                    }
+                    onOpen={openLightbox}
+                  />
+                </div>
+              </div>
+            )}
+
+            {activeCategory === "peinture" && (
+              <GalleryCarousel
+                title="Travaux de peinture"
+                description="Préparation, reprises et finitions réalisées lors des interventions."
+                items={photos.peinture}
+                onOpen={openLightbox}
+              />
+            )}
+
+            {activeCategory === "renovation" && (
+              <div className="rounded-[2rem] bg-white p-5 shadow-md ring-1 ring-[#d7c0a7]">
+                <div className="flex flex-wrap gap-2">
+                  <PillButton
+                    active={
+                      renovationCategory === "petites"
+                    }
+                    onClick={() =>
+                      setRenovationCategory("petites")
+                    }
+                  >
+                    Petites rénovations
+                  </PillButton>
+
+                  <PillButton
+                    active={
+                      renovationCategory === "surMesure"
+                    }
+                    onClick={() =>
+                      setRenovationCategory("surMesure")
+                    }
+                  >
+                    Rénovations sur mesure
+                  </PillButton>
+                </div>
+
+                {renovationCategory === "petites" && (
+                  <div className="mt-6">
+                    <GalleryCarousel
+                      title="Petites rénovations"
+                      description="Petites transformations et réparations réalisées ponctuellement."
+                      items={
+                        photos.renovationPetites
+                      }
+                      onOpen={openLightbox}
+                    />
+                  </div>
+                )}
+
+                {renovationCategory ===
+                  "surMesure" && (
+                  <div className="mt-6 space-y-6">
+                    <div className="rounded-2xl bg-[#f4ecdf] p-5 text-[#5f534a]">
+                      <p className="font-black text-[#2f261f]">
+                        Projets étudiés au cas par cas
+                      </p>
+
+                      <p className="mt-2 leading-7">
+                        Les rénovations plus importantes
+                        sont acceptées ponctuellement,
+                        après visite, étude de faisabilité
+                        et devis détaillé. Le budget dépend
+                        de l’état du support, des fournitures
+                        et de l’ampleur des travaux.
+                      </p>
+                    </div>
+
+                    <GalleryCarousel
+                      title="Avant travaux"
+                      description="État initial du chantier avant intervention."
+                      items={
+                        photos.renovationSurMesureAvant
+                      }
+                      onOpen={openLightbox}
+                    />
+
+                    <GalleryCarousel
+                      title="Pendant les travaux"
+                      description="Préparation et différentes étapes du chantier."
+                      items={
+                        photos.renovationSurMesurePendant
+                      }
+                      onOpen={openLightbox}
+                    />
+
+                    {photos
+                      .renovationSurMesureApres
+                      .length > 0 && (
+                      <GalleryCarousel
+                        title="Après travaux"
+                        description="Résultat final après intervention."
+                        items={
+                          photos
+                            .renovationSurMesureApres
+                        }
+                        onOpen={openLightbox}
+                      />
+                    )}
+
+                    {photos
+                      .renovationSurMesureAvant
+                      .length > 0 &&
+                      photos
+                        .renovationSurMesureApres
+                        .length === 0 && (
+                        <p className="rounded-2xl bg-[#fff8ed] p-4 text-sm leading-6 text-[#6f6258]">
+                          Ce chantier est actuellement en
+                          cours. Les photos du résultat final
+                          seront ajoutées à son achèvement.
+                        </p>
+                      )}
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -316,151 +614,113 @@ export default function Home() {
             </h2>
 
             <p className="mt-5 leading-8 text-[#6f6258]">
-              MD Multiservices 83 propose des interventions de proximité dans le
-              Var, avec un échange direct, une évaluation réaliste du besoin et
-              un devis adapté au chantier.
+              La demande est évaluée selon l’état réel de
+              l’installation ou du support. Les informations
+              et les photos permettent de déterminer si
+              l’intervention est réalisable.
             </p>
 
             <p className="mt-4 leading-8 text-[#6f6258]">
-              L’objectif est d’éviter les mauvaises surprises : vous envoyez les
-              informations utiles, les photos si possible, puis l’intervention
-              est étudiée avant validation.
+              Le prix est proposé au forfait après échange
+              préalable ou diagnostic sur place.
             </p>
           </div>
 
           <div className="rounded-[2rem] bg-[#2f261f] p-8 text-white shadow-md">
-            <h2 className="text-3xl font-black">À envoyer pour un devis</h2>
+            <h2 className="text-3xl font-black">
+              À envoyer pour un devis
+            </h2>
 
             <ul className="mt-6 space-y-4 text-stone-200">
-              <li>📍 Ville et adresse approximative du chantier</li>
-              <li>📸 Photos du problème ou de la zone concernée</li>
-              <li>🧰 Type d’intervention souhaitée</li>
-              <li>⏱️ Délai souhaité</li>
-              <li>📞 Disponibilités pour être rappelé</li>
+              <li>
+                📍 Ville et adresse approximative
+              </li>
+              <li>
+                📸 Photos du problème
+              </li>
+              <li>
+                🧰 Type d’intervention
+              </li>
+              <li>
+                ⏱️ Délai souhaité
+              </li>
+              <li>
+                📞 Disponibilités pour être rappelé
+              </li>
             </ul>
-
-            <p className="mt-6 rounded-2xl bg-white/10 p-4 text-stone-200">
-              Vous pouvez simplement appeler si vous préférez expliquer la
-              situation directement.
-            </p>
           </div>
         </div>
       </section>
 
       <section className="bg-[#fff8ed] px-5 py-14">
         <div className="mx-auto max-w-6xl rounded-[2rem] bg-white p-8 shadow-md ring-1 ring-[#eadac7]">
-          <h2 className="text-3xl font-black">Demande de devis</h2>
+          <h2 className="text-3xl font-black">
+            Demande de devis
+          </h2>
 
           <p className="mt-4 max-w-3xl leading-8 text-[#6f6258]">
-            Le bouton ci-dessous ouvre un email déjà prérempli avec les
-            informations utiles. Il n’est pas obligatoire de tout remplir, mais
-            plus la demande est précise, plus la réponse sera rapide.
+            Quelques informations et des photos suffisent
+            pour commencer à évaluer votre demande.
           </p>
 
-          <div className="mt-7 grid gap-5 md:grid-cols-3">
-            <Step
-              number="1"
-              title="Décrivez le besoin"
-              text="Même quelques lignes suffisent pour commencer."
-            />
-            <Step
-              number="2"
-              title="Ajoutez des photos"
-              text="Photos de la panne, de la pièce ou de la zone concernée."
-            />
-            <Step
-              number="3"
-              title="Indiquez vos disponibilités"
-              text="Cela permet d’organiser un rappel ou un rendez-vous."
-            />
-          </div>
-
-          <div className="mt-8 rounded-[2rem] bg-[#f3eadb] p-6 text-center">
+          <div className="mt-8 text-center">
             <a
               href={`mailto:mdmultiservices83@gmail.com?subject=Demande%20de%20devis%20MD%20Multiservices%2083&body=${devisMail}`}
               className="inline-block rounded-full bg-[#b65f1a] px-7 py-4 text-lg font-black text-white shadow-md hover:bg-[#934812]"
             >
               ✉️ Envoyer une demande de devis
             </a>
-
-            <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-[#6f6258]">
-              Les photos ne s’ajoutent pas automatiquement au mail : vous pouvez
-              les joindre ensuite depuis votre téléphone ou votre ordinateur.
-            </p>
           </div>
         </div>
       </section>
 
       <section className="px-5 py-14">
         <div className="mx-auto max-w-6xl">
-          <h2 className="text-3xl font-black">Zone d’intervention</h2>
+          <h2 className="text-3xl font-black">
+            Zone d’intervention
+          </h2>
 
           <p className="mt-4 leading-8 text-[#6f6258]">
-            Intervention dans le département du Var, notamment à La
-            Seyne-sur-Mer, Toulon, Six-Fours-les-Plages, Ollioules,
-            Saint-Mandrier, La Garde, La Valette-du-Var, Le Pradet et les
-            communes alentours.
+            La Seyne-sur-Mer, Toulon,
+            Six-Fours-les-Plages, Ollioules,
+            Saint-Mandrier, La Garde,
+            La Valette-du-Var, Le Pradet et les
+            communes alentour.
           </p>
-
-          <div className="mt-6 grid gap-3 sm:grid-cols-2 md:grid-cols-3">
-            {[
-              "La Seyne-sur-Mer",
-              "Toulon",
-              "Six-Fours-les-Plages",
-              "Ollioules",
-              "Saint-Mandrier",
-              "La Garde",
-              "La Valette-du-Var",
-              "Le Pradet",
-              "Hyères selon intervention",
-            ].map((city) => (
-              <div
-                key={city}
-                className="rounded-2xl bg-white p-4 font-semibold text-[#5f534a] shadow-sm ring-1 ring-[#eadac7]"
-              >
-                📍 {city}
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
       <section className="bg-[#fff8ed] px-5 py-14">
         <div className="mx-auto max-w-6xl rounded-[2rem] bg-[#2f261f] p-8 text-white shadow-lg">
-          <h2 className="text-3xl font-black">Google Business</h2>
+          <h2 className="text-3xl font-black">
+            Google Business
+          </h2>
 
           <p className="mt-4 max-w-3xl leading-8 text-stone-200">
-            Retrouvez MD Multiservices 83 sur Google pour consulter les
-            informations de contact, les photos et les avis clients.
+            Retrouvez les informations de contact et les
+            photos de MD Multiservices 83 sur Google.
           </p>
 
-          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <a
-              href={googleBusinessUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block rounded-full bg-white px-7 py-3 text-center font-bold text-[#2f261f] hover:bg-[#fff8ed]"
-            >
-              ⭐ Ouvrir la fiche Google
-            </a>
-
-            <a
-              href="tel:0768092153"
-              className="inline-block rounded-full bg-[#b65f1a] px-7 py-3 text-center font-bold text-white hover:bg-[#934812]"
-            >
-              📞 Appeler
-            </a>
-          </div>
+          <a
+            href={googleBusinessUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-7 inline-block rounded-full bg-white px-7 py-3 text-center font-bold text-[#2f261f] hover:bg-[#fff8ed]"
+          >
+            ⭐ Ouvrir la fiche Google
+          </a>
         </div>
       </section>
 
       <section className="bg-[#2f261f] px-5 py-14 text-white">
         <div className="mx-auto max-w-6xl text-center">
-          <h2 className="text-3xl font-black">Besoin d’une intervention ?</h2>
+          <h2 className="text-3xl font-black">
+            Besoin d’une intervention ?
+          </h2>
 
           <p className="mx-auto mt-4 max-w-2xl leading-8 text-stone-300">
-            Appelez directement ou envoyez quelques photos pour une première
-            évaluation.
+            Appelez directement ou envoyez quelques photos
+            pour une première évaluation.
           </p>
 
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
@@ -495,10 +755,22 @@ export default function Home() {
           className="mx-auto mb-5 h-24 w-24 rounded-full object-cover ring-2 ring-[#d8b58a]"
         />
 
-        <p className="font-black text-[#2f261f]">MD Multiservices 83</p>
-        <p>Électricité • Dépannage • Rénovation • Petits travaux</p>
-        <p className="mt-2">📞 07 68 09 21 53</p>
-        <p>✉️ mdmultiservices83@gmail.com</p>
+        <p className="font-black text-[#2f261f]">
+          MD Multiservices 83
+        </p>
+
+        <p>
+          Électricité • Dépannage • Peinture •
+          Petites rénovations
+        </p>
+
+        <p className="mt-2">
+          📞 07 68 09 21 53
+        </p>
+
+        <p>
+          ✉️ mdmultiservices83@gmail.com
+        </p>
       </footer>
 
       <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-[#d8b58a] bg-[#fff8ed] p-3 shadow-[0_-6px_20px_rgba(0,0,0,0.12)] md:hidden">
@@ -533,23 +805,27 @@ export default function Home() {
         >
           <div
             className="relative flex h-full w-full max-w-7xl flex-col items-center justify-center"
-            onClick={(event) => event.stopPropagation()}
+            onClick={(event) =>
+              event.stopPropagation()
+            }
           >
             <div className="absolute left-0 right-0 top-0 z-10 flex items-center justify-between gap-4 p-2">
               <div className="rounded-2xl bg-black/40 px-4 py-2 backdrop-blur">
                 <p className="text-sm font-bold text-white/90">
                   {lightbox.title}
                 </p>
+
                 <p className="text-xs text-white/70">
-                  Photo {lightbox.index + 1} / {lightbox.items.length}
+                  Photo {lightbox.index + 1} /{" "}
+                  {lightbox.items.length}
                 </p>
               </div>
 
               <button
                 type="button"
                 onClick={closeLightbox}
-                className="flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-2xl font-black text-black shadow-lg hover:bg-white"
-                aria-label="Fermer la galerie"
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-2xl font-black text-black shadow-lg"
+                aria-label="Fermer"
               >
                 ×
               </button>
@@ -558,7 +834,7 @@ export default function Home() {
             <button
               type="button"
               onClick={previousPhoto}
-              className="absolute left-2 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/85 text-3xl font-black leading-none text-black shadow-lg hover:bg-white md:left-6 md:h-12 md:w-12"
+              className="absolute left-2 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/85 text-3xl font-black text-black shadow-lg md:left-6"
               aria-label="Photo précédente"
             >
               ‹
@@ -566,20 +842,26 @@ export default function Home() {
 
             <img
               src={lightbox.items[lightbox.index]}
-              alt={`${lightbox.title} ${lightbox.index + 1}`}
+              alt={`${lightbox.title} ${
+                lightbox.index + 1
+              }`}
               className="max-h-[88vh] max-w-full rounded-2xl object-contain shadow-2xl"
               onTouchStart={(event) =>
-                setTouchStartX(event.changedTouches[0].clientX)
+                setTouchStartX(
+                  event.changedTouches[0].clientX,
+                )
               }
               onTouchEnd={(event) =>
-                handleTouchEnd(event.changedTouches[0].clientX)
+                handleTouchEnd(
+                  event.changedTouches[0].clientX,
+                )
               }
             />
 
             <button
               type="button"
               onClick={nextPhoto}
-              className="absolute right-2 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/85 text-3xl font-black leading-none text-black shadow-lg hover:bg-white md:right-6 md:h-12 md:w-12"
+              className="absolute right-2 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/85 text-3xl font-black text-black shadow-lg md:right-6"
               aria-label="Photo suivante"
             >
               ›
@@ -587,29 +869,38 @@ export default function Home() {
 
             <div className="absolute bottom-3 left-1/2 w-full max-w-xl -translate-x-1/2 overflow-x-auto px-4">
               <div className="flex justify-center gap-1.5 rounded-2xl bg-black/35 px-3 py-2 backdrop-blur">
-                {lightbox.items.map((src, index) => (
-                  <button
-                    key={src}
-                    type="button"
-                    onClick={() =>
-                      setLightbox((current) =>
-                        current ? { ...current, index } : current
-                      )
-                    }
-                    className={`h-9 w-9 shrink-0 overflow-hidden rounded-lg ring-2 md:h-10 md:w-10 ${
-                      index === lightbox.index
-                        ? "ring-[#f59e0b]"
-                        : "ring-white/30"
-                    }`}
-                    aria-label={`Aller à la photo ${index + 1}`}
-                  >
-                    <img
-                      src={src}
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                  </button>
-                ))}
+                {lightbox.items.map(
+                  (src, index) => (
+                    <button
+                      key={src}
+                      type="button"
+                      onClick={() =>
+                        setLightbox((current) =>
+                          current
+                            ? {
+                                ...current,
+                                index,
+                              }
+                            : current,
+                        )
+                      }
+                      className={`h-9 w-9 shrink-0 overflow-hidden rounded-lg ring-2 ${
+                        index === lightbox.index
+                          ? "ring-[#f59e0b]"
+                          : "ring-white/30"
+                      }`}
+                      aria-label={`Photo ${
+                        index + 1
+                      }`}
+                    >
+                      <img
+                        src={src}
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    </button>
+                  ),
+                )}
               </div>
             </div>
           </div>
@@ -619,18 +910,38 @@ export default function Home() {
   );
 }
 
-function TrustItem({ text }: { text: string }) {
+function TrustItem({
+  text,
+}: {
+  text: string;
+}) {
   return (
-    <div className="rounded-2xl bg-white px-4 py-3 font-semibold text-[#2f261f] shadow-sm ring-1 ring-[#eadac7]">
+    <div className="rounded-2xl bg-white px-4 py-3 font-semibold shadow-sm ring-1 ring-[#eadac7]">
       ✅ {text}
     </div>
   );
 }
 
-function ServiceCard({ title, items }: { title: string; items: string[] }) {
+function ServiceCard({
+  title,
+  items,
+  badge,
+}: {
+  title: string;
+  items: string[];
+  badge?: string;
+}) {
   return (
-    <div className="rounded-[2rem] bg-white p-6 shadow-md ring-1 ring-[#eadac7] transition hover:-translate-y-1 hover:shadow-lg">
-      <h3 className="text-xl font-black text-[#b65f1a]">{title}</h3>
+    <div className="rounded-[2rem] bg-white p-6 shadow-md ring-1 ring-[#eadac7]">
+      {badge && (
+        <span className="inline-block rounded-full bg-[#f4ecdf] px-3 py-1 text-xs font-black uppercase tracking-wide text-[#b65f1a]">
+          {badge}
+        </span>
+      )}
+
+      <h3 className="mt-3 text-xl font-black text-[#b65f1a]">
+        {title}
+      </h3>
 
       <ul className="mt-4 space-y-2 text-[#6f6258]">
         {items.map((item) => (
@@ -655,9 +966,99 @@ function Step({
       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#b65f1a] font-black text-white">
         {number}
       </div>
-      <h3 className="mt-4 font-black">{title}</h3>
-      <p className="mt-2 text-[#6f6258]">{text}</p>
+
+      <h3 className="mt-4 font-black">
+        {title}
+      </h3>
+
+      <p className="mt-2 text-[#6f6258]">
+        {text}
+      </p>
     </div>
+  );
+}
+
+function CategoryCard({
+  title,
+  description,
+  badge,
+  active,
+  onClick,
+}: {
+  title: string;
+  description: string;
+  badge?: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={`rounded-[2rem] p-6 text-left shadow-md transition ${
+        active
+          ? "bg-[#2f261f] text-white ring-4 ring-[#b65f1a]/30"
+          : "bg-white text-[#2f261f] ring-1 ring-[#d7c0a7] hover:-translate-y-1"
+      }`}
+    >
+      {badge && (
+        <span
+          className={`inline-block rounded-full px-3 py-1 text-xs font-black uppercase tracking-wide ${
+            active
+              ? "bg-white/10 text-[#f5b56d]"
+              : "bg-[#f4ecdf] text-[#b65f1a]"
+          }`}
+        >
+          {badge}
+        </span>
+      )}
+
+      <h3 className="mt-3 text-2xl font-black">
+        {title}
+      </h3>
+
+      <p
+        className={`mt-3 leading-7 ${
+          active
+            ? "text-stone-200"
+            : "text-[#6f6258]"
+        }`}
+      >
+        {description}
+      </p>
+
+      <p className="mt-5 font-black">
+        {active
+          ? "Catégorie ouverte"
+          : "Voir les photos →"}
+      </p>
+    </button>
+  );
+}
+
+function PillButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={`rounded-full px-5 py-3 font-bold transition ${
+        active
+          ? "bg-[#b65f1a] text-white shadow-md"
+          : "bg-[#f4ecdf] text-[#5f534a] hover:bg-[#eadac7]"
+      }`}
+    >
+      {children}
+    </button>
   );
 }
 
@@ -670,42 +1071,106 @@ function GalleryCarousel({
   title: string;
   description: string;
   items: readonly string[];
-  onOpen: (title: string, items: readonly string[], index: number) => void;
+  onOpen: (
+    title: string,
+    items: readonly string[],
+    index: number,
+  ) => void;
 }) {
+  const carouselRef =
+    useRef<HTMLDivElement>(null);
+
+  function scroll(direction: "left" | "right") {
+    const element = carouselRef.current;
+
+    if (!element) {
+      return;
+    }
+
+    element.scrollBy({
+      left:
+        direction === "right"
+          ? element.clientWidth * 0.8
+          : -element.clientWidth * 0.8,
+      behavior: "smooth",
+    });
+  }
+
   return (
-    <div className="rounded-[2rem] bg-white p-5 shadow-md ring-1 ring-[#d7c0a7]">
-      <div className="mb-4 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+    <div className="rounded-[2rem] bg-white p-5 shadow-sm ring-1 ring-[#d7c0a7]">
+      <div className="mb-4 flex items-end justify-between gap-4">
         <div>
-          <h3 className="text-2xl font-black text-[#b65f1a]">{title}</h3>
+          <h3 className="text-2xl font-black text-[#b65f1a]">
+            {title}
+          </h3>
+
           <p className="mt-1 text-sm leading-6 text-[#6f6258]">
             {description}
           </p>
         </div>
 
-        <p className="text-sm font-bold text-[#6f6258]">
-          {items.length} photo{items.length > 1 ? "s" : ""} • glisser →
-        </p>
+        {items.length > 0 && (
+          <div className="hidden shrink-0 gap-2 sm:flex">
+            <button
+              type="button"
+              onClick={() => scroll("left")}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f4ecdf] text-2xl font-black text-[#2f261f] shadow-sm"
+              aria-label="Défiler vers la gauche"
+            >
+              ‹
+            </button>
+
+            <button
+              type="button"
+              onClick={() => scroll("right")}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-[#b65f1a] text-2xl font-black text-white shadow-sm"
+              aria-label="Défiler vers la droite"
+            >
+              ›
+            </button>
+          </div>
+        )}
       </div>
 
-      <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-4">
-        {items.map((src, index) => (
-          <button
-            key={src}
-            type="button"
-            onClick={() => onOpen(title, items, index)}
-            className="min-w-[82%] shrink-0 snap-center text-left sm:min-w-[46%] lg:min-w-[31%]"
+      {items.length === 0 ? (
+        <div className="rounded-2xl bg-[#f4ecdf] p-6 text-center text-[#6f6258]">
+          Les photos de cette catégorie seront ajoutées
+          progressivement.
+        </div>
+      ) : (
+        <>
+          <div
+            ref={carouselRef}
+            className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
-            <img
-              src={src}
-              alt={`${title} ${index + 1}`}
-              className="h-64 w-full rounded-2xl object-cover shadow-sm ring-1 ring-[#eadac7] transition hover:scale-[1.01]"
-            />
-            <p className="mt-2 text-center text-sm font-semibold text-[#6f6258]">
-              Photo {index + 1}
-            </p>
-          </button>
-        ))}
-      </div>
+            {items.map((src, index) => (
+              <button
+                key={src}
+                type="button"
+                onClick={() =>
+                  onOpen(title, items, index)
+                }
+                className="min-w-[84%] shrink-0 snap-center text-left sm:min-w-[47%] lg:min-w-[31%]"
+              >
+                <img
+                  src={src}
+                  alt={`${title} ${index + 1}`}
+                  loading="lazy"
+                  className="h-64 w-full rounded-2xl object-cover shadow-sm ring-1 ring-[#eadac7] transition hover:scale-[1.01]"
+                />
+
+                <p className="mt-2 text-center text-sm font-semibold text-[#6f6258]">
+                  Photo {index + 1}
+                </p>
+              </button>
+            ))}
+          </div>
+
+          <p className="mt-2 text-center text-xs font-semibold text-[#6f6258] sm:hidden">
+            Faites glisser les photos avec le doigt
+          </p>
+        </>
+      )}
     </div>
   );
 }

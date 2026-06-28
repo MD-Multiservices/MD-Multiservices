@@ -1,9 +1,14 @@
 // Fichier généré automatiquement.
 // Ne pas modifier à la main.
-// Pour mettre à jour les photos : npm run photos
 
 export const photos = {
-  "renovationAvant": [
+  "electriciteDepannage": [],
+  "electriciteLuminaires": [],
+  "electricitePrises": [],
+  "electriciteTableaux": [],
+  "peinture": [],
+  "renovationPetites": [],
+  "renovationSurMesureAvant": [
     "/Renovation/Avant/Avant-4.jpg",
     "/Renovation/Avant/Avant-6.jpg",
     "/Renovation/Avant/Avant-9.jpg",
@@ -14,7 +19,7 @@ export const photos = {
     "/Renovation/Avant/Avant-2.jpg",
     "/Renovation/Avant/Avant-1.jpg"
   ],
-  "renovationPendant": [
+  "renovationSurMesurePendant": [
     "/Renovation/Pendant/Pendant-3.jpg",
     "/Renovation/Pendant/Pendant-2.jpg",
     "/Renovation/Pendant/Pendant-4.jpg",
@@ -31,8 +36,5 @@ export const photos = {
     "/Renovation/Pendant/Pendant-16.jpg",
     "/Renovation/Pendant/Pendant-15.jpg"
   ],
-  "renovationApres": [],
-  "electricite": [],
-  "peinture": [],
-  "antenneTv": []
+  "renovationSurMesureApres": []
 } as const;

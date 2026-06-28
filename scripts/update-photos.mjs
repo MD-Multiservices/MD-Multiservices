@@ -5,24 +5,63 @@ const root = process.cwd();
 const publicDir = path.join(root, "public");
 const outputFile = path.join(root, "app", "photos.ts");
 
-const folders = {
-  renovationAvant: "Renovation/Avant",
-  renovationPendant: "Renovation/Pendant",
-  renovationApres: "Renovation/Apres",
-  electricite: "Electricite",
-  peinture: "Peinture",
-  antenneTv: "Antenne TV",
+const sources = {
+  electriciteDepannage: [
+    "Electricite/Depannage",
+    "Antenne TV",
+  ],
+
+  electriciteLuminaires: [
+    "Electricite/Luminaires",
+  ],
+
+  electricitePrises: [
+    "Electricite/Prises",
+  ],
+
+  electriciteTableaux: [
+    "Electricite/Tableaux",
+  ],
+
+  peinture: [
+    "Peinture",
+  ],
+
+  renovationPetites: [
+    "Renovation/Petites-renovations",
+  ],
+
+  renovationSurMesureAvant: [
+    "Renovation/Avant",
+  ],
+
+  renovationSurMesurePendant: [
+    "Renovation/Pendant",
+  ],
+
+  renovationSurMesureApres: [
+    "Renovation/Apres",
+  ],
 };
 
 const allowedExtensions = new Set([".jpg"]);
 
-// Les dossiers indiqués ici seront affichés dans l'ordre inverse.
-const reversedFolders = new Set(["renovationPendant"]);
+/*
+  La galerie "Pendant" est volontairement inversée,
+  comme demandé précédemment.
+*/
+const reversedGroups = new Set([
+  "renovationSurMesurePendant",
+]);
 
 function walk(folderPath) {
-  if (!fs.existsSync(folderPath)) return [];
+  if (!fs.existsSync(folderPath)) {
+    return [];
+  }
 
-  const entries = fs.readdirSync(folderPath, { withFileTypes: true });
+  const entries = fs.readdirSync(folderPath, {
+    withFileTypes: true,
+  });
 
   return entries.flatMap((entry) => {
     const fullPath = path.join(folderPath, entry.name);
@@ -51,17 +90,18 @@ function walk(folderPath) {
 function toPublicUrl(fullPath) {
   const relativePath = path.relative(publicDir, fullPath);
   const normalizedPath = relativePath.split(path.sep).join("/");
+
   return encodeURI(`/${normalizedPath}`);
 }
 
 const photos = {};
 
-for (const [key, folder] of Object.entries(folders)) {
-  const folderPath = path.join(publicDir, folder);
+for (const [key, folderList] of Object.entries(sources)) {
+  let files = folderList
+    .flatMap((folder) => walk(path.join(publicDir, folder)))
+    .sort((a, b) => b.modifiedAt - a.modifiedAt);
 
-  let files = walk(folderPath).sort((a, b) => b.modifiedAt - a.modifiedAt);
-
-  if (reversedFolders.has(key)) {
+  if (reversedGroups.has(key)) {
     files = files.reverse();
   }
 
@@ -70,7 +110,6 @@ for (const [key, folder] of Object.entries(folders)) {
 
 const fileContent = `// Fichier généré automatiquement.
 // Ne pas modifier à la main.
-// Pour mettre à jour les photos : npm run photos
 
 export const photos = ${JSON.stringify(photos, null, 2)} as const;
 `;
@@ -78,6 +117,7 @@ export const photos = ${JSON.stringify(photos, null, 2)} as const;
 fs.writeFileSync(outputFile, fileContent, "utf8");
 
 console.log("Photos mises à jour :");
+
 for (const [key, items] of Object.entries(photos)) {
   console.log(`- ${key}: ${items.length} photo(s)`);
 }
