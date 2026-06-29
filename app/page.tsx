@@ -1,11 +1,11 @@
 "use client";
 
 import dynamic from "next/dynamic";
-
 import {
   useEffect,
   useRef,
   useState,
+  type ReactNode,
 } from "react";
 
 import { photos } from "./photos";
@@ -280,7 +280,7 @@ export default function Home() {
 
             <a
               href="tel:0768092153"
-              className="mt-5 block rounded-full bg-[#b65f1a] px-7 py-4 text-center text-lg font-black text-white shadow-md hover:bg-[#934812]"
+              className="mt-5 block rounded-full bg-[#b65f1a] px-7 py-4 text-center text-lg font-black text-white shadow-md transition hover:bg-[#934812]"
             >
               📞 Appeler maintenant : 07 68 09 21 53
             </a>
@@ -289,14 +289,14 @@ export default function Home() {
           <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
             <a
               href="https://wa.me/33768092153"
-              className="rounded-full bg-[#256d3b] px-7 py-3 text-center font-bold text-white shadow-md hover:bg-[#1f5b31]"
+              className="rounded-full bg-[#256d3b] px-7 py-3 text-center font-bold text-white shadow-md transition hover:bg-[#1f5b31]"
             >
               💬 Envoyer des photos par WhatsApp
             </a>
 
             <a
               href={`mailto:mdmultiservices83@gmail.com?subject=Demande%20de%20devis%20MD%20Multiservices%2083&body=${devisMail}`}
-              className="rounded-full bg-[#2f261f] px-7 py-3 text-center font-bold text-white shadow-md hover:bg-[#1f1814]"
+              className="rounded-full bg-[#2f261f] px-7 py-3 text-center font-bold text-white shadow-md transition hover:bg-[#1f1814]"
             >
               ✉️ Demander un devis
             </a>
@@ -591,14 +591,13 @@ export default function Home() {
                       </p>
 
                       <p className="mt-2 leading-7">
-                        Les rénovations plus
-                        importantes sont acceptées
-                        ponctuellement, après visite,
-                        étude de faisabilité et devis
-                        détaillé. Le budget dépend de
-                        l’état du support, des
-                        fournitures et de l’ampleur
-                        des travaux.
+                        Les rénovations plus importantes
+                        sont acceptées ponctuellement,
+                        après visite, étude de faisabilité
+                        et devis détaillé. Le budget dépend
+                        de l’état du support, des
+                        fournitures et de l’ampleur des
+                        travaux.
                       </p>
                     </div>
 
@@ -641,10 +640,9 @@ export default function Home() {
                         .renovationSurMesureApres
                         .length === 0 && (
                         <p className="rounded-2xl bg-[#fff8ed] p-4 text-sm leading-6 text-[#6f6258]">
-                          Ce chantier est
-                          actuellement en cours. Les
-                          photos du résultat final
-                          seront ajoutées à son
+                          Ce chantier est actuellement en
+                          cours. Les photos du résultat
+                          final seront ajoutées à son
                           achèvement.
                         </p>
                       )}
@@ -710,7 +708,7 @@ export default function Home() {
           <div className="mt-8 text-center">
             <a
               href={`mailto:mdmultiservices83@gmail.com?subject=Demande%20de%20devis%20MD%20Multiservices%2083&body=${devisMail}`}
-              className="inline-block rounded-full bg-[#b65f1a] px-7 py-4 text-lg font-black text-white shadow-md hover:bg-[#934812]"
+              className="inline-block rounded-full bg-[#b65f1a] px-7 py-4 text-lg font-black text-white shadow-md transition hover:bg-[#934812]"
             >
               ✉️ Envoyer une demande de devis
             </a>
@@ -782,7 +780,7 @@ export default function Home() {
 
               <a
                 href="tel:0768092153"
-                className="mt-6 block rounded-full bg-[#b65f1a] px-6 py-4 text-center font-black text-white shadow-md hover:bg-[#934812]"
+                className="mt-6 block rounded-full bg-[#b65f1a] px-6 py-4 text-center font-black text-white shadow-md transition hover:bg-[#934812]"
               >
                 📞 Vérifier ma commune
               </a>
@@ -806,7 +804,7 @@ export default function Home() {
             href={googleBusinessUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-7 inline-block rounded-full bg-white px-7 py-3 text-center font-bold text-[#2f261f] hover:bg-[#fff8ed]"
+            className="mt-7 inline-block rounded-full bg-white px-7 py-3 text-center font-bold text-[#2f261f] transition hover:bg-[#fff8ed]"
           >
             ⭐ Ouvrir la fiche Google
           </a>
@@ -827,21 +825,21 @@ export default function Home() {
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <a
               href="tel:0768092153"
-              className="rounded-full bg-[#b65f1a] px-7 py-4 text-lg font-black text-white hover:bg-[#934812]"
+              className="rounded-full bg-[#b65f1a] px-7 py-4 text-lg font-black text-white transition hover:bg-[#934812]"
             >
               📞 07 68 09 21 53
             </a>
 
             <a
               href="https://wa.me/33768092153"
-              className="rounded-full bg-[#256d3b] px-7 py-4 text-lg font-black text-white hover:bg-[#1f5b31]"
+              className="rounded-full bg-[#256d3b] px-7 py-4 text-lg font-black text-white transition hover:bg-[#1f5b31]"
             >
               💬 WhatsApp
             </a>
 
             <a
               href={`mailto:mdmultiservices83@gmail.com?subject=Demande%20de%20devis%20MD%20Multiservices%2083&body=${devisMail}`}
-              className="rounded-full bg-white px-7 py-4 text-lg font-black text-[#2f261f] hover:bg-[#fff8ed]"
+              className="rounded-full bg-white px-7 py-4 text-lg font-black text-[#2f261f] transition hover:bg-[#fff8ed]"
             >
               ✉️ Devis
             </a>
@@ -856,21 +854,64 @@ export default function Home() {
           className="mx-auto mb-5 h-24 w-24 rounded-full object-cover ring-2 ring-[#d8b58a]"
         />
 
-        <p className="font-black text-[#2f261f]">
+        <p className="text-lg font-black text-[#2f261f]">
           MD Multiservices 83
         </p>
 
-        <p>
+        <p className="mt-1">
           Électricité • Dépannage • Peinture • Petites
           rénovations
         </p>
 
-        <p className="mt-2">
-          📞 07 68 09 21 53
-        </p>
+        <div className="mx-auto mt-6 flex max-w-3xl flex-wrap items-center justify-center gap-x-3 gap-y-2 border-y border-[#d8b58a] py-4 text-sm font-semibold">
+          <span>MD Multiservices 83</span>
 
-        <p>
-          ✉️ mdmultiservices83@gmail.com
+          <span aria-hidden="true">
+            •
+          </span>
+
+          <span>Entreprise individuelle</span>
+
+          <span aria-hidden="true">
+            •
+          </span>
+
+          <span>SIREN 104 499 900</span>
+        </div>
+
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-3 font-bold">
+          <a
+            href="tel:0768092153"
+            className="transition hover:text-[#b65f1a]"
+          >
+            07 68 09 21 53
+          </a>
+
+          <a
+            href="https://wa.me/33768092153"
+            className="transition hover:text-[#b65f1a]"
+          >
+            WhatsApp
+          </a>
+
+          <a
+            href="mailto:mdmultiservices83@gmail.com"
+            className="transition hover:text-[#b65f1a]"
+          >
+            E-mail
+          </a>
+
+          <a
+            href="/mentions-legales"
+            className="underline decoration-[#b65f1a] decoration-2 underline-offset-4 transition hover:text-[#b65f1a]"
+          >
+            Mentions légales
+          </a>
+        </div>
+
+        <p className="mt-6 text-xs text-[#827267]">
+          © {new Date().getFullYear()} MD Multiservices
+          83 — Tous droits réservés
         </p>
       </footer>
 
@@ -926,7 +967,7 @@ export default function Home() {
                 type="button"
                 onClick={closeLightbox}
                 className="flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-2xl font-black text-black shadow-lg"
-                aria-label="Fermer"
+                aria-label="Fermer la galerie"
               >
                 ×
               </button>
@@ -996,7 +1037,7 @@ export default function Home() {
                           ? "ring-[#f59e0b]"
                           : "ring-white/30"
                       }`}
-                      aria-label={`Photo ${
+                      aria-label={`Aller à la photo ${
                         index + 1
                       }`}
                     >
@@ -1052,7 +1093,9 @@ function ServiceCard({
 
       <ul className="mt-4 space-y-2 text-[#6f6258]">
         {items.map((item) => (
-          <li key={item}>• {item}</li>
+          <li key={item}>
+            • {item}
+          </li>
         ))}
       </ul>
     </div>
@@ -1151,7 +1194,7 @@ function PillButton({
 }: {
   active: boolean;
   onClick: () => void;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <button
