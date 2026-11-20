@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/mentions-legales" },
@@ -11,12 +12,12 @@ export default function MentionsLegalesPage() {
   return (
     <main id="contenu-principal" className="min-h-screen bg-[#f4ecdf] px-5 py-10 text-[#2f261f] md:py-16">
       <div className="mx-auto max-w-4xl">
-        <a
+        <Link
           href="/"
           className="inline-flex items-center rounded-full bg-white px-5 py-3 font-bold text-[#2f261f] shadow-sm ring-1 ring-[#eadac7] transition hover:bg-[#fff8ed]"
         >
           ← Retour au site
-        </a>
+        </Link>
 
         <div className="mt-8 rounded-[2rem] bg-white p-6 shadow-md ring-1 ring-[#eadac7] md:p-10">
           <p className="text-sm font-black uppercase tracking-widest text-[#b65f1a]">
