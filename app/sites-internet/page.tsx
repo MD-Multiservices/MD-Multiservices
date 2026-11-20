@@ -38,7 +38,7 @@ const prestations = [
 
 export default function SitesInternetPage() {
   return (
-    <main className="min-h-screen bg-[#f4ecdf] text-[#2f261f]">
+    <main id="contenu-principal" className="min-h-screen bg-[#f4ecdf] text-[#2f261f]">
       <div className="border-b border-[#dfd3c1] bg-[#faf6ef] px-5 py-5">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4">
           <a className="text-xl font-black" href="/">MD Multiservices <span className="text-[#8a431b]">83</span></a>
