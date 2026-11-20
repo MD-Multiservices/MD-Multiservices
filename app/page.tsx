@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 
+import { DigitalOffers, QuoteForm, type RequestKind } from "./QuoteRequest";
 import { photos } from "./photos";
 
 const InterventionMap = dynamic(
@@ -48,33 +49,10 @@ type LightboxState = {
   index: number;
 } | null;
 
-const devisMail = encodeURIComponent(`Bonjour,
 
-Je souhaite vous transmettre une demande de devis.
-
-Nom :
-Téléphone :
-Ville du chantier :
-Adresse approximative du chantier :
-
-Type d’intervention souhaitée :
-Électricité / Dépannage / Luminaire / Prise / Tableau électrique / Peinture / Petite rénovation / Autre
-
-Description de la demande :
-
-
-Photos disponibles :
-Oui / Non
-
-Délai souhaité :
-
-
-Disponibilités pour être rappelé :
-
-
-Merci.`);
 
 export default function Home() {
+  const [requestKind, setRequestKind] = useState<RequestKind>("travaux");
   const [activeCategory, setActiveCategory] =
     useState<MainCategory>("electricite");
 
@@ -295,12 +273,14 @@ export default function Home() {
             </a>
 
             <a
-              href={`mailto:mdmultiservices83@gmail.com?subject=Demande%20de%20devis%20MD%20Multiservices%2083&body=${devisMail}`}
+              href="#demande-devis"
               className="rounded-full bg-[#2f261f] px-7 py-3 text-center font-bold text-white shadow-md transition hover:bg-[#1f1814]"
             >
               ✉️ Demander un devis
             </a>
           </div>
+
+          <a href="#services-numeriques" className="mt-5 inline-block font-bold underline underline-offset-4">Sites internet et outils de gestion</a>
 
           <div className="mx-auto mt-10 grid max-w-4xl gap-4 sm:grid-cols-2 md:grid-cols-4">
             <TrustItem text="Contact direct" />
@@ -694,27 +674,8 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-[#fff8ed] px-5 py-14">
-        <div className="mx-auto max-w-6xl rounded-[2rem] bg-white p-8 shadow-md ring-1 ring-[#eadac7]">
-          <h2 className="text-3xl font-black">
-            Demande de devis
-          </h2>
-
-          <p className="mt-4 max-w-3xl leading-8 text-[#6f6258]">
-            Quelques informations et des photos suffisent
-            pour commencer à évaluer votre demande.
-          </p>
-
-          <div className="mt-8 text-center">
-            <a
-              href={`mailto:mdmultiservices83@gmail.com?subject=Demande%20de%20devis%20MD%20Multiservices%2083&body=${devisMail}`}
-              className="inline-block rounded-full bg-[#b65f1a] px-7 py-4 text-lg font-black text-white shadow-md transition hover:bg-[#934812]"
-            >
-              ✉️ Envoyer une demande de devis
-            </a>
-          </div>
-        </div>
-      </section>
+      <DigitalOffers onSelect={setRequestKind} />
+      <QuoteForm kind={requestKind} onChange={setRequestKind} />
 
       <section className="px-5 py-14">
         <div className="mx-auto max-w-6xl">
@@ -838,7 +799,7 @@ export default function Home() {
             </a>
 
             <a
-              href={`mailto:mdmultiservices83@gmail.com?subject=Demande%20de%20devis%20MD%20Multiservices%2083&body=${devisMail}`}
+              href="#demande-devis"
               className="rounded-full bg-white px-7 py-4 text-lg font-black text-[#2f261f] transition hover:bg-[#fff8ed]"
             >
               ✉️ Devis
@@ -932,7 +893,7 @@ export default function Home() {
           </a>
 
           <a
-            href={`mailto:mdmultiservices83@gmail.com?subject=Demande%20de%20devis%20MD%20Multiservices%2083&body=${devisMail}`}
+            href="#demande-devis"
             className="rounded-2xl bg-[#2f261f] px-3 py-3 text-center text-sm font-black text-white"
           >
             ✉️ Devis
