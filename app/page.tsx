@@ -71,6 +71,15 @@ export default function Home() {
 
   const galleryContentRef =
     useRef<HTMLDivElement>(null);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const [mapVisible, setMapVisible] = useState(false);
+  const electricalHasPhotos = [
+    photos.electriciteDepannage,
+    photos.electriciteLuminaires,
+    photos.electricitePrises,
+    photos.electriciteTableaux,
+  ].some((items) => items.length > 0);
+  const paintingHasPhotos = photos.peinture.length > 0;
 
   const electricalGalleries = {
     depannage: {
@@ -104,6 +113,17 @@ export default function Home() {
 
   const selectedElectricalGallery =
     electricalGalleries[electricalCategory];
+
+  useEffect(() => {
+    const element = mapContainerRef.current;
+    if (!element || mapVisible) return;
+    if (!("IntersectionObserver" in window)) return;
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) setMapVisible(true);
+    }, { rootMargin: "180px" });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [mapVisible]);
 
   function selectMainCategory(
     category: MainCategory,
@@ -241,12 +261,12 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f4ecdf] pb-24 text-[#2f261f] md:pb-0">
+    <main id="contenu-principal" className="min-h-screen bg-[#f4ecdf] pb-24 text-[#2f261f] md:pb-0">
       <header className="site-head">
         <a href="#accueil" className="brand">MD Multiservices <span>83</span></a>
         <nav aria-label="Navigation principale">
           <a href="#prestations">Travaux</a><a href="#realisations">Réalisations</a>
-          <a href="#services-numeriques">Sites internet</a><a href="#demande-devis">Devis</a>
+          <a href="/sites-internet">Sites internet</a><a href="#demande-devis">Devis</a>
         </nav>
       </header>
       <section id="accueil" className="hero">
@@ -260,6 +280,10 @@ export default function Home() {
               <a href="#demande-devis">Demander un devis</a>
             </div>
             <a className="hero-whatsapp" href="https://wa.me/33768092153">Envoyer des photos par WhatsApp</a>
+            <p className="mt-4 max-w-xl border-l-4 border-[#8a431b] pl-4 text-sm leading-6 text-[#574c40]">
+              Vous êtes artisan ou indépendant ? J’ai également réalisé ce site et un outil de gestion pour mon activité.
+              <a className="ml-1 font-bold underline underline-offset-4" href="/sites-internet">Découvrez les solutions numériques proposées.</a>
+            </p>
           </div>
           <figure><Image src="/Renovation/Pendant/Pendant-2.jpg" alt="Pièce en cours de rénovation, avec les murs et le sol en préparation" width={720} height={520} priority sizes="(min-width: 800px) 38vw, 100vw" />
             <figcaption><span>Chantier de rénovation</span><a href="#realisations">Voir les photos →</a></figcaption>
@@ -359,11 +383,11 @@ export default function Home() {
           </h2>
 
           <p className="mt-3 max-w-3xl leading-8 text-[#5f534a]">
-            Découvrez le chantier avant et pendant les travaux. Touchez une photo pour l’agrandir et parcourir l’album.
+            Découvrez des photos réelles de chantiers avant et pendant les travaux. Sélectionnez une image pour l’agrandir et parcourir l’album.
           </p>
 
           <div className="mt-8 grid gap-5 md:grid-cols-3">
-            <CategoryCard
+            {electricalHasPhotos && <CategoryCard
               title="Travaux électriques"
               description="Dépannage, luminaires, prises, interrupteurs et tableaux."
               badge="Activité principale"
@@ -373,9 +397,9 @@ export default function Home() {
               onClick={() =>
                 selectMainCategory("electricite")
               }
-            />
+            />}
 
-            <CategoryCard
+            {paintingHasPhotos && <CategoryCard
               title="Peinture"
               description="Préparation, petites reprises et finitions."
               active={
@@ -384,7 +408,7 @@ export default function Home() {
               onClick={() =>
                 selectMainCategory("peinture")
               }
-            />
+            />}
 
             <CategoryCard
               title="Rénovation"
@@ -398,6 +422,12 @@ export default function Home() {
             />
           </div>
 
+          {!electricalHasPhotos && !paintingHasPhotos && (
+            <p className="mt-4 max-w-3xl text-sm leading-6 text-[#5f534a]">
+              Les photos présentées concernent pour le moment un chantier de rénovation en cours.
+              Les réalisations électriques et de peinture seront publiées lorsqu’elles seront disponibles.
+            </p>
+          )}
           <div
             ref={galleryContentRef}
             className="scroll-mt-6 pt-8"
@@ -672,7 +702,14 @@ export default function Home() {
 
           <div className="mt-8 grid gap-6 lg:grid-cols-[1.35fr_0.85fr]">
             <div className="overflow-hidden rounded-[2rem] bg-white p-3 shadow-md ring-1 ring-[#eadac7]">
-              <InterventionMap />
+              <div ref={mapContainerRef}>
+                {mapVisible ? <InterventionMap /> : (
+                  <div className="flex h-[350px] flex-col items-center justify-center gap-4 rounded-[1.5rem] bg-[#f4ecdf] px-6 text-center text-[#574c40] md:h-[430px]">
+                    <p className="font-semibold">La zone habituelle couvre environ 25 km autour de La Seyne-sur-Mer.</p>
+                    <button type="button" className="rounded-xl bg-[#2f261f] px-5 py-3 font-bold text-white" onClick={() => setMapVisible(true)}>Afficher la carte interactive</button>
+                  </div>
+                )}
+              </div>
 
               <p className="px-3 pb-2 pt-4 text-center text-sm leading-6 text-[#6f6258]">
                 Zone indicative : le temps de trajet et la
@@ -749,12 +786,11 @@ export default function Home() {
       <section className="bg-[#2f261f] px-5 py-14 text-white">
         <div className="mx-auto max-w-6xl text-center">
           <h2 className="text-3xl font-black">
-            Besoin d’une intervention ?
+            Une intervention ou un projet numérique ?
           </h2>
 
           <p className="mx-auto mt-4 max-w-2xl leading-8 text-stone-300">
-            Appelez directement ou envoyez quelques photos
-            pour une première évaluation.
+            Pour des travaux, un dépannage ou un projet numérique, décrivez votre besoin et échangeons sur les possibilités.
           </p>
 
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
@@ -815,6 +851,7 @@ export default function Home() {
         </div>
 
         <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-3 font-bold">
+          <a href="/sites-internet" className="underline decoration-[#b65f1a] underline-offset-4 transition hover:text-[#b65f1a]">Sites internet &amp; gestion</a>
           <a
             href="tel:0768092153"
             className="transition hover:text-[#b65f1a]"

@@ -1,0 +1,26 @@
+name: Site MD - qualité et compilation
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+  pull_request:
+    branches:
+      - main
+permissions:
+  contents: read
+jobs:
+  verification:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4 # v4.4.0
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: node tests/site-content.cjs
+      - run: npm run lint
+      - run: npm run build

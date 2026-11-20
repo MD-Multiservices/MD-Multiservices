@@ -10,10 +10,12 @@ function extension(file: File) {
 }
 
 export function checkPhotos(files: File[]) {
+  if (files.length > 3)
+    return "Choisissez au maximum trois photos pour votre demande.";
   if (files.some(file => !Object.hasOwn(formats, extension(file)) || file.size === 0))
     return "Choisissez des photos JPG, PNG, WebP, HEIC ou HEIF contenant une image.";
-  if (files.reduce((sum, file) => sum + file.size, 0) > 15_000_000)
-    return "Les photos dépassent 15 Mo au total. Sélectionnez moins de photos ou réduisez leur taille.";
+  if (files.reduce((sum, file) => sum + file.size, 0) > 12_000_000)
+    return "Les photos dépassent 12 Mo au total. Réduisez leur taille ou envoyez-en moins.";
   return "";
 }
 
