@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function MentionsLegalesPage() {
   return (
-    <main className="min-h-screen bg-[#f4ecdf] px-5 py-10 text-[#2f261f] md:py-16">
+    <main id="contenu-principal" className="min-h-screen bg-[#f4ecdf] px-5 py-10 text-[#2f261f] md:py-16">
       <div className="mx-auto max-w-4xl">
         <a
           href="/"
