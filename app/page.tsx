@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import dynamic from "next/dynamic";
 import {
   useEffect,
@@ -54,13 +55,13 @@ type LightboxState = {
 export default function Home() {
   const [requestKind, setRequestKind] = useState<RequestKind>("travaux");
   const [activeCategory, setActiveCategory] =
-    useState<MainCategory>("electricite");
+    useState<MainCategory>("renovation");
 
   const [electricalCategory, setElectricalCategory] =
     useState<ElectricalCategory>("depannage");
 
   const [renovationCategory, setRenovationCategory] =
-    useState<RenovationCategory>("petites");
+    useState<RenovationCategory>("surMesure");
 
   const [lightbox, setLightbox] =
     useState<LightboxState>(null);
@@ -166,19 +167,31 @@ export default function Home() {
     });
   }
 
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const galleryOpen = lightbox !== null;
   useEffect(() => {
-    if (!lightbox) {
+    if (!galleryOpen) {
       return;
     }
 
     const previousOverflow =
       document.body.style.overflow;
 
+    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     document.body.style.overflow = "hidden";
+    dialogRef.current?.querySelector<HTMLButtonElement>("button")?.focus();
 
     function handleKeyDown(
       event: KeyboardEvent,
     ) {
+      if (event.key === "Tab") {
+        const buttons = dialogRef.current?.querySelectorAll<HTMLButtonElement>("button");
+        if (buttons?.length) {
+          const first = buttons[0], last = buttons[buttons.length - 1];
+          if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+          if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+        }
+      }
       if (event.key === "Escape") {
         closeLightbox();
       }
@@ -201,12 +214,13 @@ export default function Home() {
       document.body.style.overflow =
         previousOverflow;
 
+      opener?.focus({ preventScroll: true });
       window.removeEventListener(
         "keydown",
         handleKeyDown,
       );
     };
-  }, [lightbox]);
+  }, [galleryOpen]);
 
   function handleTouchEnd(endX: number) {
     if (touchStartX === null) {
@@ -228,73 +242,35 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-[#f4ecdf] pb-24 text-[#2f261f] md:pb-0">
-      <section className="px-5 py-12 md:py-20">
-        <div className="mx-auto max-w-5xl text-center">
-          <p className="text-sm font-bold uppercase tracking-widest text-[#b65f1a]">
-            La Seyne-sur-Mer • Toulon • Département du Var
-          </p>
-
-          <h1 className="mx-auto mt-5 max-w-4xl text-4xl font-black leading-tight md:text-6xl">
-            Dépannage, électricité et petits travaux :
-            une réponse claire près de chez vous
-          </h1>
-
-          <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-[#5f534a]">
-            Recherche de panne, luminaires, prises,
-            interrupteurs, antenne TV, peinture et petites
-            transformations à La Seyne-sur-Mer, Toulon et
-            dans les communes alentour.
-          </p>
-
-          <div className="mx-auto mt-7 max-w-2xl rounded-[2rem] bg-white p-5 shadow-md ring-1 ring-[#eadac7]">
-            <p className="text-lg font-black">
-              Besoin d’une intervention ?
-            </p>
-
-            <p className="mt-2 text-[#6f6258]">
-              Appelez directement ou envoyez quelques
-              photos pour une première évaluation.
-            </p>
-
-            <a
-              href="tel:0768092153"
-              className="mt-5 block rounded-full bg-[#b65f1a] px-7 py-4 text-center text-lg font-black text-white shadow-md transition hover:bg-[#934812]"
-            >
-              📞 Appeler maintenant : 07 68 09 21 53
-            </a>
+      <header className="site-head">
+        <a href="#accueil" className="brand">MD Multiservices <span>83</span></a>
+        <nav aria-label="Navigation principale">
+          <a href="#prestations">Travaux</a><a href="#realisations">Réalisations</a>
+          <a href="#services-numeriques">Sites internet</a><a href="#demande-devis">Devis</a>
+        </nav>
+      </header>
+      <section id="accueil" className="hero">
+        <div className="hero-grid">
+          <div>
+            <p className="hero-location">La Seyne-sur-Mer · Toulon et alentours</p>
+            <h1>Votre électricien à La Seyne-sur-Mer</h1>
+            <p className="hero-intro">Une panne à identifier, un luminaire à poser ou une pièce à rénover ? J’interviens chez vous et vous propose un devis adapté aux travaux.</p>
+            <div className="hero-actions">
+              <a href="tel:0768092153">07 68 09 21 53</a>
+              <a href="#demande-devis">Demander un devis</a>
+            </div>
+            <a className="hero-whatsapp" href="https://wa.me/33768092153">Envoyer des photos par WhatsApp</a>
           </div>
-
-          <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
-            <a
-              href="https://wa.me/33768092153"
-              className="rounded-full bg-[#256d3b] px-7 py-3 text-center font-bold text-white shadow-md transition hover:bg-[#1f5b31]"
-            >
-              💬 Envoyer des photos par WhatsApp
-            </a>
-
-            <a
-              href="#demande-devis"
-              className="rounded-full bg-[#2f261f] px-7 py-3 text-center font-bold text-white shadow-md transition hover:bg-[#1f1814]"
-            >
-              ✉️ Demander un devis
-            </a>
-          </div>
-
-          <a href="#services-numeriques" className="mt-5 inline-block font-bold underline underline-offset-4">Sites internet et outils de gestion</a>
-
-          <div className="mx-auto mt-10 grid max-w-4xl gap-4 sm:grid-cols-2 md:grid-cols-4">
-            <TrustItem text="Contact direct" />
-            <TrustItem text="Devis au forfait" />
-            <TrustItem text="Intervention locale" />
-            <TrustItem text="Explications claires" />
-          </div>
+          <figure><Image src="/Renovation/Pendant/Pendant-2.jpg" alt="Pièce en cours de rénovation, avec les murs et le sol en préparation" width={720} height={520} priority sizes="(min-width: 800px) 38vw, 100vw" />
+            <figcaption><span>Chantier de rénovation</span><a href="#realisations">Voir les photos →</a></figcaption>
+          </figure>
         </div>
       </section>
 
-      <section className="bg-[#fff8ed] px-5 py-14">
+      <section id="prestations" className="bg-[#fff8ed] px-5 py-14">
         <div className="mx-auto max-w-6xl">
           <h2 className="text-3xl font-black">
-            Services proposés
+            Électricité, peinture et petits travaux
           </h2>
 
           <p className="mt-3 max-w-3xl leading-8 text-[#6f6258]">
@@ -376,16 +352,14 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-[#eadac7] px-5 py-14">
+      <section id="realisations" className="bg-[#eadac7] px-5 py-14">
         <div className="mx-auto max-w-6xl">
           <h2 className="text-3xl font-black">
             Réalisations
           </h2>
 
           <p className="mt-3 max-w-3xl leading-8 text-[#5f534a]">
-            Choisissez une famille de travaux, puis une
-            sous-catégorie pour consulter les photos
-            correspondantes.
+            Découvrez le chantier avant et pendant les travaux. Touchez une photo pour l’agrandir et parcourir l’album.
           </p>
 
           <div className="mt-8 grid gap-5 md:grid-cols-3">
@@ -876,7 +850,7 @@ export default function Home() {
         </p>
       </footer>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-[#d8b58a] bg-[#fff8ed] p-3 shadow-[0_-6px_20px_rgba(0,0,0,0.12)] md:hidden">
+      <nav aria-label="Contact rapide" className="mobile-contact fixed bottom-0 left-0 right-0 z-50 border-t border-[#d8b58a] bg-[#fff8ed] p-3 shadow-[0_-6px_20px_rgba(0,0,0,0.12)] md:hidden">
         <div className="grid grid-cols-3 gap-2">
           <a
             href="tel:0768092153"
@@ -903,6 +877,7 @@ export default function Home() {
 
       {lightbox && (
         <div
+          ref={dialogRef} role="dialog" aria-modal="true" aria-label={lightbox.title}
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-3 text-white md:p-5"
           onClick={closeLightbox}
         >
@@ -1016,18 +991,6 @@ export default function Home() {
         </div>
       )}
     </main>
-  );
-}
-
-function TrustItem({
-  text,
-}: {
-  text: string;
-}) {
-  return (
-    <div className="rounded-2xl bg-white px-4 py-3 font-semibold shadow-sm ring-1 ring-[#eadac7]">
-      ✅ {text}
-    </div>
   );
 }
 
@@ -1269,9 +1232,9 @@ function GalleryCarousel({
                     index,
                   )
                 }
-                className="min-w-[84%] shrink-0 snap-center text-left sm:min-w-[47%] lg:min-w-[31%]"
+                className="w-[84%] shrink-0 snap-center text-left sm:w-[47%] lg:w-[31%]"
               >
-                <img
+                <Image width={640} height={400} sizes="(min-width: 1024px) 32vw, (min-width: 640px) 47vw, 84vw"
                   src={src}
                   alt={`${title} ${
                     index + 1
@@ -1281,7 +1244,7 @@ function GalleryCarousel({
                 />
 
                 <p className="mt-2 text-center text-sm font-semibold text-[#6f6258]">
-                  Photo {index + 1}
+                  {title} · {index + 1} / {items.length}
                 </p>
               </button>
             ))}

@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "MD Multiservices 83 | Dépannage, électricité et petits travaux dans le Var",
+  metadataBase: new URL("https://www.mdmultiservices83.fr"),
+  alternates: { canonical: "/" },
+  title: "Électricien à La Seyne-sur-Mer et Toulon | MD Multiservices 83",
   description:
-    "MD Multiservices 83 intervient à La Seyne-sur-Mer, Toulon et dans le Var pour l’électricité, la recherche de panne, l’antenne TV, la peinture, le sol PVC et les petits travaux du quotidien.",
+    "Dépannage électrique, luminaires et petits travaux à La Seyne-sur-Mer et Toulon. Découvrez les chantiers, demandez un devis ou présentez votre projet de site internet.",
   keywords: [
     "MD Multiservices 83",
     "électricien La Seyne-sur-Mer",
@@ -19,7 +21,8 @@ export const metadata: Metadata = {
     title: "MD Multiservices 83",
     description:
       "Un artisan local pour vos dépannages et petits travaux dans le Var.",
-    url: "https://md-multiservices.vercel.app",
+    url: "https://www.mdmultiservices83.fr",
+    images: ["/Logo/logo.jpg"],
     siteName: "MD Multiservices 83",
     type: "website",
     locale: "fr_FR",

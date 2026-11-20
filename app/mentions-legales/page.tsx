@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/mentions-legales" },
   title: "Mentions légales | MD Multiservices 83",
   description:
     "Informations légales concernant le site MD Multiservices 83.",
@@ -108,7 +109,7 @@ export default function MentionsLegalesPage() {
                 MD Multiservices 83 propose notamment des prestations de
                 dépannage, d’électricité, de pose ou remplacement de
                 luminaires, prises et interrupteurs, de peinture, de petites
-                réparations et de rénovation légère.
+                réparations et de rénovation légère. L’entreprise propose également la création de sites internet, d’outils de gestion et leur maintenance sur devis.
               </p>
 
               <p>
@@ -138,7 +139,7 @@ export default function MentionsLegalesPage() {
               </div>
             </LegalSection>
 
-            <LegalSection title="Données personnelles">
+            <div id="donnees" /><LegalSection title="Données personnelles">
               <p>
                 Les informations communiquées volontairement par téléphone,
                 WhatsApp ou e-mail sont utilisées uniquement pour répondre aux
@@ -146,6 +147,8 @@ export default function MentionsLegalesPage() {
                 assurer le suivi des prestations.
               </p>
 
+              <p>Le formulaire prépare le message sur votre appareil. Les photos sélectionnées sont jointes au brouillon téléchargé. L’entreprise les reçoit lorsque vous envoyez le message depuis votre messagerie.</p>
+              <p>La préparation d’un devis à votre demande relève des mesures précontractuelles. Vous pouvez adresser une réclamation à la <a className="underline" href="https://www.cnil.fr/fr/plaintes">CNIL</a>.</p>
               <p>
                 Ces informations ne sont pas vendues. Vous pouvez demander leur
                 accès, leur rectification ou leur suppression en écrivant à :
