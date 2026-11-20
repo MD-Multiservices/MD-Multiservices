@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Création de sites internet pour artisans à Toulon | MD Multiservices 83",
@@ -41,11 +42,11 @@ export default function SitesInternetPage() {
     <main id="contenu-principal" className="min-h-screen bg-[#f4ecdf] text-[#2f261f]">
       <div className="border-b border-[#dfd3c1] bg-[#faf6ef] px-5 py-5">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4">
-          <a className="text-xl font-black" href="/">MD Multiservices <span className="text-[#8a431b]">83</span></a>
+          <Link className="text-xl font-black" href="/">MD Multiservices <span className="text-[#8a431b]">83</span></Link>
           <nav aria-label="Navigation des services numériques" className="flex flex-wrap items-center gap-5 font-semibold">
-            <a className="underline underline-offset-4" href="/#prestations">Travaux</a>
-            <a className="underline underline-offset-4" href="/#realisations">Réalisations</a>
-            <a className="rounded-xl bg-[#8a431b] px-4 py-3 text-white" href="/#demande-devis">Demander un devis</a>
+            <Link className="underline underline-offset-4" href="/#prestations">Travaux</Link>
+            <Link className="underline underline-offset-4" href="/#realisations">Réalisations</Link>
+            <Link className="rounded-xl bg-[#8a431b] px-4 py-3 text-white" href="/#demande-devis">Demander un devis</Link>
           </nav>
         </div>
       </div>
@@ -59,7 +60,7 @@ export default function SitesInternetPage() {
             Je propose aussi cette expérience aux professionnels qui souhaitent une présence en ligne claire ou une application pratique, sans fonctionnalités superflues.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <a href="/#demande-devis" className="rounded-xl bg-[#8a431b] px-6 py-4 font-bold text-white">Décrire mon projet</a>
+            <Link href="/#demande-devis" className="rounded-xl bg-[#8a431b] px-6 py-4 font-bold text-white">Décrire mon projet</Link>
             <a href="https://md-multiservices-manager.vercel.app/demo" className="rounded-xl border border-[#8a431b] px-6 py-4 font-bold text-[#8a431b]" target="_blank" rel="noopener noreferrer">Voir la démonstration du Manager</a>
           </div>
           <p className="mt-4 text-sm text-[#6f6258]">La démonstration utilise des données fictives. Les prestations numériques peuvent être étudiées à distance.</p>
@@ -132,7 +133,7 @@ export default function SitesInternetPage() {
           <div className="mt-10 rounded-3xl bg-[#2f261f] p-7 text-white md:p-9">
             <h2 className="text-2xl font-black">Parlons de votre projet</h2>
             <p className="mt-3 leading-7 text-stone-200">Indiquez votre activité, les fonctionnalités souhaitées et votre budget. Je vous proposerai une solution adaptée.</p>
-            <a href="/#demande-devis" className="mt-6 inline-flex rounded-xl bg-white px-6 py-4 font-bold text-[#2f261f]">Préparer ma demande de devis</a>
+            <Link href="/#demande-devis" className="mt-6 inline-flex rounded-xl bg-white px-6 py-4 font-bold text-[#2f261f]">Préparer ma demande de devis</Link>
           </div>
         </div>
       </section>
@@ -140,9 +141,9 @@ export default function SitesInternetPage() {
       <footer className="bg-[#f3eadb] px-5 py-8 text-center text-sm text-[#574c40]">
         <p className="font-bold">MD Multiservices 83</p>
         <div className="mt-3 flex flex-wrap justify-center gap-5">
-          <a className="underline" href="/">Accueil</a>
+          <Link className="underline" href="/">Accueil</Link>
           <a className="underline" href="mailto:mdmultiservices83@gmail.com">E-mail</a>
-          <a className="underline" href="/mentions-legales">Mentions légales</a>
+          <Link className="underline" href="/mentions-legales">Mentions légales</Link>
         </div>
       </footer>
     </main>
