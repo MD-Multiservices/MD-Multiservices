@@ -261,7 +261,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f4ecdf] pb-24 text-[#2f261f] md:pb-0">
+    <main id="contenu-principal" className="min-h-screen bg-[#f4ecdf] pb-24 text-[#2f261f] md:pb-0">
       <header className="site-head">
         <a href="#accueil" className="brand">MD Multiservices <span>83</span></a>
         <nav aria-label="Navigation principale">
